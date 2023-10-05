@@ -1,0 +1,11 @@
+export const SHOW_FORM = "SHOW_FORM";
+export const CLOSE_FORM = "CLOSE_FORM";
+export const FETCH_LIST_PRODUCT = "FETCH_LIST_PRODUCT";
+export const FETCH_LIST_PRODUCT1 = "FETCH_LIST_PRODUCT1";
+
+export const DELETE_PRODUCT = "DELETE_PRODUCT";
+export const ADD_PRODUCT = "ADD_PRODUCT";
+export const FETCH_LIST_CATEGORY = "FETCH_LIST_CATEGORY";
+
+export const REGISTER ="REGISTER";
+export const LOGIN ="LOGIN";
