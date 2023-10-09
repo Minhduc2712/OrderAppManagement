@@ -7,9 +7,7 @@ import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { cartUiActions } from "../../store/shopping-cart/cartUiSlice";
-import { Button } from 'react-bootstrap';
-
-
+import { Button } from "react-bootstrap";
 
 import "../../styles/header.css";
 import { selectlistUser } from "../../Redux/Selector/UserSelector";
@@ -31,17 +29,18 @@ const nav__links = [
     display: "Contact",
     path: "/contact",
   },
-  
 ];
 
-const LogStatus =[{
-  display:"Login",
-  path:"/login",
-},
-{
-  display:"Register",
-  path:"/register",
-}];
+const LogStatus = [
+  {
+    display: "Login",
+    path: "/login",
+  },
+  {
+    display: "Register",
+    path: "/register",
+  },
+];
 
 const Header = () => {
   const menuRef = useRef(null);
@@ -59,11 +58,8 @@ const Header = () => {
   console.log(menuRef?.current?.classList.value);
 
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
-  const { data: User, status, error, isLoggedIn } = useSelector(
-    selectlistUser
-  );
 
+  const { data: User, status, error, isLoggedIn } = useSelector(selectlistUser);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,12 +72,11 @@ const Header = () => {
         headerRef.current.classList.remove("header__shrink");
       }
     };
-  
+
     window.addEventListener("scroll", handleScroll);
-  
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
 
   return (
     <header className="header" ref={headerRef}>
@@ -114,20 +109,22 @@ const Header = () => {
                   {item.display}
                 </NavLink>
               ))}
-              {isLoggedIn ? (      <Button variant="danger">Logout</Button>
-):(<div>{LogStatus.map((item, index) => (
-                <NavLink
-                  to={item.path}
-                  key={index}
-                  className={(navClass) =>
-                    navClass.isActive ? "active__menu" : ""
-                  }
-                  onClick={toggleMenu}
-                >
-                  {item.display}
-                </NavLink>
-              ))}</div>)}
-              
+              {isLoggedIn ? (
+                <Button variant="danger">Logout</Button>
+              ) : (
+                LogStatus.map((item, index) => (
+                  <NavLink
+                    to={item.path}
+                    key={index}
+                    className={(navClass) =>
+                      navClass.isActive ? "active__menu" : ""
+                    }
+                    onClick={toggleMenu}
+                  >
+                    {item.display}
+                   </NavLink>
+                ))
+              )}
             </div>
           </div>
 
@@ -137,7 +134,7 @@ const Header = () => {
               <i className="ri-shopping-basket-line"></i>
               <span className="cart__badge">{totalQuantity}</span>
             </span>
-            
+
             <span className="mobile__menu" onClick={toggleMenu}>
               <i className="ri-menu-line"></i>
             </span>

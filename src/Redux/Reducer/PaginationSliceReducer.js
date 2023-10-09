@@ -41,17 +41,20 @@ const PaginationSliceReducer = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(actionFetchPaginationListProductAPI.fulfilled, (state, action) => {
+    builder.addCase(
+      actionFetchPaginationListProductAPI.fulfilled,
+      (state, action) => {
         state.content = action.payload;
         state.pageNo = action.meta.arg.pageNo; // Access the argument passed to the thunk
         state.pageSize = action.meta.arg.pageSize; // Access the argument passed to the thunk
         state.totalElements = action.meta.arg.totalElements; // Access the argument passed to the thunk
         state.totalPages = action.meta.arg.totalPages; // Access the argument passed to the thunk
-      });
+      }
+    );
   },
 });
 
-export const { setPageNo, setPageSize, setTotalElements, setTotalPages } = PaginationSliceReducer.actions;
+export const { setPageNo, setPageSize, setTotalElements, setTotalPages } =
+  PaginationSliceReducer.actions;
 
 export default PaginationSliceReducer.reducer;

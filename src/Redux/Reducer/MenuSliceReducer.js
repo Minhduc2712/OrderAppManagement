@@ -20,8 +20,7 @@ const initialState = {
 const ProductSliceReducer = createSlice({
   name: "products",
   initialState,
-  reducers: {
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(actionFetchListProductAPI.pending, (state) => {
