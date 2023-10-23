@@ -7,8 +7,8 @@ export const actionFetchPaginationListProductAPI = createAsyncThunk(
   FETCH_LIST_PRODUCT1,
   async (params) => {
     try {
-      const response = await getListFilterdProductAPI(params);
-      return response.data; // Assuming your API response contains a 'data' property
+      let response = await getListFilterdProductAPI(params);
+      return response; // Assuming your API response contains a 'data' property
     } catch (error) {
       throw error;
     }
@@ -17,14 +17,14 @@ export const actionFetchPaginationListProductAPI = createAsyncThunk(
 
 const initialState = {
   content: [],
-  pageNo: 1,
+  pageNo: 0,
   pageSize: 4,
   totalElements: 0,
   totalPages: 0,
 };
 
 const PaginationSliceReducer = createSlice({
-  name: "post1",
+  name: "post",
   initialState,
   reducers: {
     setPageNo: (state, action) => {
@@ -44,11 +44,17 @@ const PaginationSliceReducer = createSlice({
     builder.addCase(
       actionFetchPaginationListProductAPI.fulfilled,
       (state, action) => {
-        state.content = action.payload;
-        state.pageNo = action.meta.arg.pageNo; // Access the argument passed to the thunk
-        state.pageSize = action.meta.arg.pageSize; // Access the argument passed to the thunk
-        state.totalElements = action.meta.arg.totalElements; // Access the argument passed to the thunk
-        state.totalPages = action.meta.arg.totalPages; // Access the argument passed to the thunk
+        console.log("Action Payload:", action.payload);
+        if (action.payload) {
+          console.log("Content:", action.payload.content);
+          state.content = action.payload.content;
+          state.pageNo = action.payload.pageNo;
+          state.pageSize = action.payload.pageSize;
+          state.totalElements = action.payload.totalElements;
+          state.totalPages = action.payload.totalPages;
+          console.log(state.totalElements);
+          console.log(state.totalPages);
+        }
       }
     );
   },
@@ -57,4 +63,4 @@ const PaginationSliceReducer = createSlice({
 export const { setPageNo, setPageSize, setTotalElements, setTotalPages } =
   PaginationSliceReducer.actions;
 
-export default PaginationSliceReducer.reducer;
+export default PaginationSliceReducer;

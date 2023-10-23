@@ -6,8 +6,15 @@ const getListProductAPI = () => {
 };
 const getListFilterdProductAPI = (params) => {
   params = params?.toString();
-  let url = `product?`+params;
-  return api("GET", url, null);
+  let url = `product?` + params;
+  return api("GET", url, null)
+    .then((response) => {
+      console.log("API Response:", response);
+      return response;
+    })
+    .catch((error) => {
+      throw error;
+    });
 };
 
 const getProductByIdAPI = (id) => {
@@ -29,6 +36,19 @@ const updateProductAPI = (productUpdate) => {
   return api("PUT", url, productUpdate);
 };
 
+const searchProductAPI = (params) => {
+  params = params?.toString();
+  let url = `product/search?query=` + params;
+  return api("GET", url, null)
+    .then((response) => {
+      console.log("API Response:", response);
+      return response;
+    })
+    .catch((error) => {
+      throw error;
+    });
+};
+
 export {
   getListProductAPI,
   getListFilterdProductAPI,
@@ -36,4 +56,5 @@ export {
   addProductNewAPI,
   deleteProductAPI,
   updateProductAPI,
+  searchProductAPI,
 };

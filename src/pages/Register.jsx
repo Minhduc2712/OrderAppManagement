@@ -3,19 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
 import * as Yup from "yup";
 import { register } from "../Redux/Reducer/UserSliceReducer";
 import { selectlistUser } from "../Redux/Selector/UserSelector";
+import { Link } from "react-router-dom";
+import { Col, Row } from "reactstrap";
 
 const Register = () => {
   const [successful, setSuccessful] = useState(false);
 
-const { data: User, status, error } = useSelector(
-    selectlistUser
-  );
-console.log(error);
-const message =error;
+  const { data: User, status, error } = useSelector(selectlistUser);
+  const message = error;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,8 +21,8 @@ const message =error;
   }, [dispatch]);
 
   const initialValues = {
-    firstName:"",
-    lastName:"",
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     password: "",
@@ -36,9 +34,7 @@ const message =error;
         "len",
         "The username must be between 3 and 20 characters.",
         (val) =>
-          val &&
-          val.toString().length >= 3 &&
-          val.toString().length <= 20
+          val && val.toString().length >= 3 && val.toString().length <= 20
       )
       .required("This field is required!"),
     lastName: Yup.string()
@@ -46,9 +42,7 @@ const message =error;
         "len",
         "The username must be between 3 and 20 characters.",
         (val) =>
-          val &&
-          val.toString().length >= 3 &&
-          val.toString().length <= 20
+          val && val.toString().length >= 3 && val.toString().length <= 20
       )
       .required("This field is required!"),
     username: Yup.string()
@@ -56,9 +50,7 @@ const message =error;
         "len",
         "The username must be between 3 and 20 characters.",
         (val) =>
-          val &&
-          val.toString().length >= 3 &&
-          val.toString().length <= 20
+          val && val.toString().length >= 3 && val.toString().length <= 20
       )
       .required("This field is required!"),
     email: Yup.string()
@@ -69,15 +61,13 @@ const message =error;
         "len",
         "The password must be between 6 and 40 characters.",
         (val) =>
-          val &&
-          val.toString().length >= 6 &&
-          val.toString().length <= 40
+          val && val.toString().length >= 6 && val.toString().length <= 40
       )
       .required("This field is required!"),
   });
 
   const handleRegister = (formValue) => {
-    const { firstName,lastName, username, email, password } = formValue;
+    const { firstName, lastName, username, email, password } = formValue;
 
     setSuccessful(false);
 
@@ -107,10 +97,13 @@ const message =error;
           <Form>
             {!successful && (
               <div>
-                
                 <div className="form-group">
                   <label htmlFor="firstName">Firstname</label>
-                  <Field name="firstName" type="text" className="form-control" />
+                  <Field
+                    name="firstName"
+                    type="text"
+                    className="form-control"
+                  />
                   <ErrorMessage
                     name="firstName"
                     component="div"
@@ -161,7 +154,9 @@ const message =error;
                 </div>
 
                 <div className="form-group">
-                  <button type="submit" className="btn btn-primary btn-block">Sign Up</button>
+                  <button type="submit" className="btn btn-primary btn-block">
+                    Sign Up
+                  </button>
                 </div>
               </div>
             )}
@@ -172,11 +167,22 @@ const message =error;
       {message && (
         <div className="form-group">
           <div
-            className={successful ? "alert alert-success" : "alert alert-danger"}
+            className={
+              successful ? "alert alert-success" : "alert alert-danger"
+            }
             role="alert"
           >
             {message}
           </div>
+          <Row>
+            <Col>
+              <button className="order__btn d-flex align-items-center justify-content-between ">
+                <Link to="/login">
+                  <i className="ri-arrow-left-s-line"></i>Login
+                </Link>
+              </button>
+            </Col>
+          </Row>
         </div>
       )}
     </div>

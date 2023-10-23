@@ -1,15 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import CommonSection from "../components/UI/common-section/CommonSection";
 import Helmet from "../components/Helmet/Helmet";
 import "../styles/cart-page.css";
 import { useSelector, useDispatch } from "react-redux";
 import { Container, Row, Col } from "reactstrap";
-import { cartActions } from "../store/shopping-cart/cartSlice";
+
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
+import { getProductCartsByUserId } from "../store/shopping-cart/cartSliceReducer";
 
 const Cart = () => {
-  const cartItems = useSelector((state) => state.cart.cartItems);
+  const dispatch = useDispatch();
+  const token = Cookies.get("userPayload");
+
+  useEffect(() => {
+    const fetchCartData = async () => {
+      const jwtToken = token.jwtToken;
+      let userId = token.userId;
+      if (jwtToken) {
+        const decodedToken = jwt_decode(token);
+        const currentTime = Date.now() / 1000;
+
+        if (decodedToken.exp > currentTime) {
+          dispatch(getProductCartsByUserId(userId));
+        }
+      }
+    };
+
+    fetchCartData();
+  }, [dispatch, token]);
+
+  const cartItems = useSelector((state) => state.cart.cart);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
   return (
     <Helmet title="Cart">
@@ -61,7 +84,7 @@ const Tr = (props) => {
   const dispatch = useDispatch();
 
   const deleteItem = () => {
-    dispatch(cartActions.deleteItem(id));
+    // dispatch(cartActions.deleteItem(id));
   };
   return (
     <tr>

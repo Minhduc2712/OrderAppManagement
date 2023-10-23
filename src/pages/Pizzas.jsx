@@ -1,58 +1,104 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useRef, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
-
 import ProductCard from "../components/UI/product-card/ProductCard";
 import Helmet from "../components/Helmet/Helmet";
 import ReactPaginate from "react-paginate";
 import "../styles/pagination.css";
+import "../styles/search-section.css";
 import { useDispatch, useSelector } from "react-redux";
 import { selectlistProduct } from "../Redux/Selector/ProductSelector";
-import { FETCH_LIST_PRODUCT } from "../Redux/ActionType/ActionType";
 import { actionFetchListProductAPI } from "../Redux/Reducer/MenuSliceReducer";
 import { selectlistFilteredProduct } from "../Redux/Selector/PaginationSelector";
 import { actionFetchPaginationListProductAPI } from "../Redux/Reducer/PaginationSliceReducer";
+import queryString from "query-string";
+import $ from "jquery";
+import { SearchResultsList } from "../components/SearchBar/SearchResultList";
+import { SearchBar } from "../components/SearchBar/SearchBar";
+import SortingDropdown from "../components/SortingBar/SortingDropdown";
 
 const Pizzas = () => {
   const [pageNumber, setPageNumber] = useState(0);
 
   const dispatch = useDispatch();
   const stateRedux = useSelector((state) => state);
-  const { data: searchedProduct, status, error } = useSelector(
-    selectlistProduct
-  );
-  const {content: product, pageNo, pageSize} = useSelector(
-    selectlistFilteredProduct
-  );
-  // const { pageNo, pageSize, sortBy, sortDir, data: searchedProduct  } = useSelector((state) => state.data);
+  const {
+    data: searchedProduct,
+    status,
+    error,
+  } = useSelector(selectlistProduct);
+  const {
+    content: product,
+    pageNo,
+    pageSize,
+    totalElements,
+    totalPages,
+  } = useSelector(selectlistFilteredProduct);
+
+  const [filters, setFilters] = useState({
+    pageNo,
+    pageSize,
+    sortBy: "name",
+    sortDir: "asc",
+  });
+
+  const paginationRef = useRef(null);
 
   useEffect(() => {
-    dispatch(actionFetchListProductAPI());
-    dispatch(actionFetchPaginationListProductAPI());
-  }, [dispatch]);
+    if (!paginationRef.current) {
+      paginationRef.current = true;
 
-  useEffect(()=>{
+      $(".paginationBttns a:nth-child(2)").addClass("active");
+    } else {
+      const paramsString = queryString.stringify(filters);
+      console.log(paramsString);
+      dispatch(actionFetchListProductAPI());
+      dispatch(actionFetchPaginationListProductAPI(`${paramsString}`));
+    }
+  }, [dispatch, filters]);
 
-  })
-
-  const productPerPage = 4;
-  const visitedPage = pageNumber * productPerPage;
-  // const displayPage = searchedProduct.slice(
-  //   visitedPage,
-  //   visitedPage + productPerPage
-  // );
-
-  const pageCount = Math.ceil(searchedProduct.length / productPerPage);
+  $(document).ready(function () {
+    $(".paginationBttns a").click(function () {
+      $(".paginationBttns a").removeClass("active");
+      $(this).addClass("active");
+    });
+  });
 
   const changePage = ({ selected }) => {
-    setPageNumber(selected);
+    setFilters({
+      ...filters,
+      pageNo: selected,
+    });
+  };
+
+  const handleSort = (sortBySearch, sortDirSearch) => {
+    console.log(sortBySearch);
+    console.log(sortDirSearch);
+    setFilters({
+      ...filters,
+      sortBy: sortBySearch,
+      sortDir: sortDirSearch,
+    });
   };
 
   return (
     <Helmet title="All Pizzas">
       <Container>
         <Row>
-          {searchedProduct.map((item) => (
+          <div className="search-bar-container">
+            <SearchBar />
+            <SearchResultsList />
+          </div>
+        </Row>
+        <Row>
+          <Col></Col>
+          {/* <Col></Col> */}
+          <Col>
+            <SortingDropdown onSort={handleSort} />
+          </Col>
+          {/* <Col></Col> */}
+        </Row>
+        <Row>
+          {product.map((item) => (
             <Col
               lg="3"
               md="4"
@@ -66,7 +112,7 @@ const Pizzas = () => {
           ))}
           <div className="d-flex justify-content-center mt-4 mb-4">
             <ReactPaginate
-              pageCount={pageCount}
+              pageCount={totalPages}
               onPageChange={changePage}
               previousLabel={"Prev"}
               nextLabel={"Next"}

@@ -1,13 +1,20 @@
 import { api } from "./api";
 
 const SignUp = (NewUser) => {
-  return api("POST", "user/signup", NewUser);
+  return api("POST", "auth/signup", NewUser);
 };
 
-const SignIn = (UserData) =>{
-    return api("POST","user/signin", UserData);
-}
+const SignIn = (UserData) => {
+  return api("POST", "auth/signin", UserData);
+};
 
-export{
-    SignIn,SignUp
-}
+const Logout = () => {
+  return api("POST", "auth/signout", "");
+};
+
+const getUserById = (id) => {
+  const url = " auth/user/" + id;
+  return api("GET", url, null);
+};
+
+export { SignIn, SignUp, Logout, getUserById };

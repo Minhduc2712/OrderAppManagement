@@ -2,28 +2,40 @@ import React from "react";
 
 import "../../../styles/product-card.css";
 
-// import productImg from "../../../assets/images/product_2.1.jpg";
-
-import { useDispatch } from "react-redux";
-import { cartActions } from "../../../store/shopping-cart/cartSlice";
-
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import {
+  addProducttoCart,
+  cartActions,
+  getProductCartsByUserId,
+} from "../../../store/shopping-cart/cartSliceReducer";
+import { selectlistUser } from "../../../Redux/Selector/UserSelector";
+import Cookies from "js-cookie";
 
 const ProductCard = (props) => {
   const { id, name, img, price, extraIngredients, country, rate } = props.item;
+  const { data: User, status, error } = useSelector(selectlistUser);
+
+  const tokenString = Cookies.get("userPayload");
+  let userId;
+
+  if (tokenString) {
+    const token = JSON.parse(tokenString);
+    const jwtToken = token.jwtToken;
+    userId = token.userId;
+  }
+
+  const productId = id;
+  const qty = 1;
+
   const dispatch = useDispatch();
 
-  const addToCart = () => {
-    dispatch(
-      cartActions.addItem({
-        id,
-        name,
-        img,
-        price,
-        extraIngredients,
-        country
-      })
-    );
+  const addToCart = async () => {
+    const formValues = { productId, userId, qty, price };
+    console.log("formValues", formValues);
+    dispatch(cartActions.addItem(formValues));
+    dispatch(addProducttoCart(formValues));
+    // dispatch(getProductCartsByUserId(userId));
   };
 
   return (
@@ -33,12 +45,10 @@ const ProductCard = (props) => {
         <h5>
           <Link to={`/pizzas/${id}`}>{name}</Link>
         </h5>
-        <h6>
-            {country}
-        </h6>
+        <h6>{country}</h6>
       </div>
       <div className="d-flex flex-column align-items-center justify-content-between">
-          {rate}
+        {rate}
       </div>
       <div className="d-flex flex-column align-items-center justify-content-between">
         <span className="product__price mb-2">{price} € </span>

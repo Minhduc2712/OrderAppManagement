@@ -4,80 +4,69 @@ import { useNavigate } from "react-router-dom";
 
 import "../../../styles/cart-item.css";
 
-import { useDispatch } from "react-redux";
-import { cartActions } from "../../../store/shopping-cart/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addProducttoCart,
+  cartActions,
+} from "../../../store/shopping-cart/cartSliceReducer";
+import Cookies from "js-cookie";
+import { selectlistUser } from "../../../Redux/Selector/UserSelector";
 
 const CartItem = ({ item, onClose }) => {
-  const { id, title, price, image01, quantity, extraIngredients } = item;
-  let navigate = useNavigate(); 
-
   const dispatch = useDispatch();
+  const { id, name, price, img, quantity } = item;
+  const { data: User, status, error } = useSelector(selectlistUser);
 
-  const incrementItem = (event) => {
-    dispatch(
-      cartActions.addItem({
-        id,
-        title,
-        price,
-        image01,
-        extraIngredients
-      })
-    );
-    event.stopPropagation();
-  };
+  const tokenString = Cookies.get("userPayload");
+  let userId;
 
-  const decreaseItem = (event) => {
-    dispatch(cartActions.removeItem(id));
-    event.stopPropagation();
-  };
-
-  const deleteItem = (event) => {
-    dispatch(cartActions.deleteItem(id));
-    event.stopPropagation();
-  };
-
-  const handlePizzaSelection = () =>  {
-    navigate(`/pizzas/${id}`);
-    onClose(); 
+  if (tokenString) {
+    const token = JSON.parse(tokenString);
+    const jwtToken = token.jwtToken;
+    userId = token.userId;
   }
 
+  const productId = id;
+  const qty = 1;
+  const formValues = { productId, userId, qty, price };
+  console.log("formValues", formValues);
+  const incrementItem = () => {
+    dispatch(cartActions.addItem(formValues));
+    dispatch(addProducttoCart(formValues));
+  };
+
+  const decreaseItem = () => {
+    // dispatch(cartActions.removeItem(id));
+  };
+
+  const deleteItem = () => {
+    // dispatch(cartActions.deleteItem(id));
+  };
+
   return (
-    <ListGroupItem className="border-0 cart__item" onClick={handlePizzaSelection}>
-      <div className="cart__item-info d-flex gap-4">
-        <img src={image01} alt="product-img" />
+    <ListGroupItem className="border-0 cart__item">
+      <div className="cart__item-info d-flex gap-2">
+        <img src={img} alt="product-img" />
 
         <div className="cart__product-info w-100 d-flex align-items-center gap-4 justify-content-between">
           <div>
-            <h6 className="cart__product-title">{title}</h6>
+            <h6 className="cart__product-title">{name}</h6>
             <p className=" d-flex align-items-center gap-5 cart__product-price">
               {quantity}x <span>${price}</span>
             </p>
-            <div className="d-flex flex-column">
-            {
-              extraIngredients !== undefined && (
-                Array.from(extraIngredients).map(value => {
-                  return(
-                    <span key={value} className="m-0">
-                      {value}
-                    </span>
-                  )
-                })
-                )
-              }
-              </div>
             <div className=" d-flex align-items-center justify-content-between increase__decrease-btn">
-              <span className="increase__btn" onClick={event => incrementItem(event)}>
-                <i className="ri-add-line"></i>
+              <span className="increase__btn" onClick={incrementItem}>
+                <i class="ri-add-line"></i>
               </span>
               <span className="quantity">{quantity}</span>
-              <span className="decrease__btn" onClick={event => decreaseItem(event)}>
-                <i className="ri-subtract-line"></i>
+              <span className="decrease__btn" onClick={decreaseItem}>
+                <i class="ri-subtract-line"></i>
               </span>
             </div>
           </div>
 
-          <span className="delete__btn" onClick={event => deleteItem(event)}>
-            <i className="ri-close-line"></i>
+          <span className="delete__btn" onClick={deleteItem}>
+            <i class="ri-close-line"></i>
           </span>
         </div>
       </div>

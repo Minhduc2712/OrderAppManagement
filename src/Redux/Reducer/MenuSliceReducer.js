@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getListProductAPI } from "../../API/ProductApi";
-import { FETCH_LIST_PRODUCT } from "../ActionType/ActionType";
+import { getListProductAPI, searchProductAPI } from "../../API/ProductApi";
+import { FETCH_LIST_PRODUCT, SEARCH_PRODUCT } from "../ActionType/ActionType";
 
 export const actionFetchListProductAPI = createAsyncThunk(
   FETCH_LIST_PRODUCT,
@@ -11,9 +11,22 @@ export const actionFetchListProductAPI = createAsyncThunk(
   }
 );
 
+export const actionFetchSearchedProductAPI = createAsyncThunk(
+  SEARCH_PRODUCT,
+  async (params) => {
+    try {
+      let response = await searchProductAPI(params);
+      return response; // Assuming your API response contains a 'data' property
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 const initialState = {
   status: "idle",
   data: [],
+  searchData: [],
   error: null,
 };
 
@@ -34,6 +47,18 @@ const ProductSliceReducer = createSlice({
       .addCase(actionFetchListProductAPI.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(actionFetchSearchedProductAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(actionFetchSearchedProductAPI.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.searchData = action.payload;
+        state.error = null;
+      })
+      .addCase(actionFetchSearchedProductAPI.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
       });
   },
 });

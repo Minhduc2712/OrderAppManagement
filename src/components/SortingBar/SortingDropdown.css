@@ -1,0 +1,59 @@
+/* SortingDropdown.css */
+
+.sorting-dropdown {
+    padding: 10px;
+    width: 100%;
+    margin-right: 10px;
+    border-radius: 6px;
+  }
+  
+  /* Style for the select component */
+  .react-select__control {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    height: 40px;
+  }
+  
+  /* Style for the dropdown menu */
+  .react-select__menu {
+    margin-top: 8px;
+  }
+  
+  /* Style for selected options */
+  .react-select__multi-value {
+    background-color: #ccc;
+    color: #fff;
+  }
+  
+  /* Style for option labels */
+  .react-select__option {
+    cursor: pointer;
+  }
+  
+  /* Style for selected option labels */
+  .react-select__multi-value__label {
+    color: #fff;
+  }
+  
+  /* Style for clear button */
+  .react-select__multi-value__remove {
+    color: #fff;
+    background-color: #ccc;
+    border-radius: 0;
+  }
+  
+  /* Style for the placeholder text */
+  .react-select__placeholder {
+    color: #777;
+  }
+  
+  /* Style for the dropdown indicator */
+  .react-select__indicator-separator {
+    display: none;
+  }
+  
+  /* Style for the dropdown arrow icon */
+  .react-select__dropdown-indicator {
+    color: #777;
+  }
+  
