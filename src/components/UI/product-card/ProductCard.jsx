@@ -1,41 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+
+import Cookies from "js-cookie";
 
 import "../../../styles/product-card.css";
-
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { selectlistUser } from "../../../Redux/Selector/UserSelector";
 import {
   addProducttoCart,
   cartActions,
   getProductCartsByUserId,
 } from "../../../store/shopping-cart/cartSliceReducer";
-import { selectlistUser } from "../../../Redux/Selector/UserSelector";
-import Cookies from "js-cookie";
+import { selectlistProductCart } from "../../../store/shopping-cart/cartSelector";
+import { getCartsByUserId } from "../../../API/CartApi";
 
-const ProductCard = (props) => {
-  const { id, name, img, price, extraIngredients, country, rate } = props.item;
-  const { data: User, status, error } = useSelector(selectlistUser);
+const ProductCard = ({ item }) => {
+  const dispatch = useDispatch();
+  const { id, name, img, price, country, rate } = item;
 
   const tokenString = Cookies.get("userPayload");
-  let userId;
+  let userId = null;
+  let cartId = null;
+  let productPrice = null;
+  const productId = id;
+
+  const [responseCart, setResponseCart] = useState([]);
 
   if (tokenString) {
     const token = JSON.parse(tokenString);
-    const jwtToken = token.jwtToken;
     userId = token.userId;
   }
 
-  const productId = id;
-  const qty = 1;
-
-  const dispatch = useDispatch();
-
   const addToCart = async () => {
-    const formValues = { productId, userId, qty, price };
-    console.log("formValues", formValues);
-    dispatch(cartActions.addItem(formValues));
-    dispatch(addProducttoCart(formValues));
-    // dispatch(getProductCartsByUserId(userId));
+    const fetchData = async () => {
+      if (userId) {
+        const response = await dispatch(getProductCartsByUserId(userId));
+        const cartItems = response.payload.data.cart;
+
+        setResponseCart(cartItems);
+
+        // Check if the product is already in the cart
+        const existingCartItem = cartItems.find(
+          (cartItem) => cartItem.productId === productId
+        );
+
+        if (existingCartItem) {
+          cartId = existingCartItem.id;
+          productPrice = existingCartItem.price;
+          console.log("cartId", cartId);
+        }
+      }
+    };
+    fetchData();
+    console.log("productId", productId);
+    console.log("id", id);
+    const qty = 1;
+    const formValuesDB = { productId, userId, qty, price };
+    const formValuesLocal = { cartId, userId, qty, productPrice };
+    dispatch(cartActions.addItem(formValuesLocal));
+    dispatch(addProducttoCart(formValuesDB));
   };
 
   return (
@@ -51,7 +74,7 @@ const ProductCard = (props) => {
         {rate}
       </div>
       <div className="d-flex flex-column align-items-center justify-content-between">
-        <span className="product__price mb-2">{price} € </span>
+        <span className="product__price mb-2">{price} €</span>
         <button className="addTOCART__btn" onClick={addToCart}>
           Add to Cart
         </button>

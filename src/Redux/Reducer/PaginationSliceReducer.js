@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { FETCH_LIST_PRODUCT1 } from "../ActionType/ActionType";
+import { FETCH_LIST_PRODUCT_PAGINATION } from "../ActionType/ActionType";
 import { getListFilterdProductAPI } from "../../API/ProductApi";
 
 // Async thunk for fetching paginated list of products
 export const actionFetchPaginationListProductAPI = createAsyncThunk(
-  FETCH_LIST_PRODUCT1,
+  FETCH_LIST_PRODUCT_PAGINATION,
   async (params) => {
     try {
       let response = await getListFilterdProductAPI(params);

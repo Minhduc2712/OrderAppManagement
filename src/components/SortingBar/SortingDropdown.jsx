@@ -42,8 +42,9 @@ const SortingDropdown = ({ onSort }) => {
   };
 
   return (
-    <div className="sorting-dropdown">
+    <div className="sorting__widget text-end">
       <Select
+        className="w-50"
         options={options}
         value={selectedOptions}
         isMulti

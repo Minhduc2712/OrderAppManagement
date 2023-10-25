@@ -9,11 +9,12 @@ import { selectlistProductCart } from "../../../store/shopping-cart/cartSelector
 
 const Carts = () => {
   const dispatch = useDispatch();
-  const { data: cartProducts } = useSelector(selectlistProductCart);
+  const {
+    data: cartProducts,
+    totalAmount,
+    totalQuantity,
+  } = useSelector(selectlistProductCart);
   console.log("cart", cartProducts);
-  const { data, totalAmount, totalQuantity } = useSelector(
-    selectlistProductCart
-  );
 
   const toggleCart = () => {
     dispatch(cartUiActions.toggle());

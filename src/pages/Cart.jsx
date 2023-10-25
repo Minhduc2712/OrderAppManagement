@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import CommonSection from "../components/UI/common-section/CommonSection";
 import Helmet from "../components/Helmet/Helmet";
@@ -10,30 +10,15 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import { getProductCartsByUserId } from "../store/shopping-cart/cartSliceReducer";
+import { actionFetchProductById } from "../Redux/Reducer/MenuSliceReducer";
 
 const Cart = () => {
+  const cartItems = useSelector((state) => state.cart.data);
+  const totalAmount = useSelector((state) => state.cart.totalAmount);
+
   const dispatch = useDispatch();
   const token = Cookies.get("userPayload");
 
-  useEffect(() => {
-    const fetchCartData = async () => {
-      const jwtToken = token.jwtToken;
-      let userId = token.userId;
-      if (jwtToken) {
-        const decodedToken = jwt_decode(token);
-        const currentTime = Date.now() / 1000;
-
-        if (decodedToken.exp > currentTime) {
-          dispatch(getProductCartsByUserId(userId));
-        }
-      }
-    };
-
-    fetchCartData();
-  }, [dispatch, token]);
-
-  const cartItems = useSelector((state) => state.cart.cart);
-  const totalAmount = useSelector((state) => state.cart.totalAmount);
   return (
     <Helmet title="Cart">
       <CommonSection title="Your Cart" />
@@ -46,7 +31,16 @@ const Cart = () => {
               ) : (
                 <>
                   <h5 className="mb-5">Summary of your order</h5>
-                  <table className="table table-borderless mb-5 align-middle">
+                  <table className="table table-bordered mb-5 align-middle text-center">
+                    <thead>
+                      <tr>
+                        <th>Image</th>
+                        <th>Product Title</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Delete</th>
+                      </tr>
+                    </thead>
                     <tbody>
                       {cartItems.map((item) => (
                         <Tr item={item} key={item.id} />
@@ -79,21 +73,39 @@ const Cart = () => {
   );
 };
 
-const Tr = (props) => {
-  const { id, image01, title, price, quantity } = props.item;
+const Tr = ({ item }) => {
   const dispatch = useDispatch();
+  const [img, setImg] = useState("");
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState();
+  const { id, productPrice, quantity, productId } = item;
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        const response = await dispatch(actionFetchProductById(productId));
+        console.log("response", response.payload);
+        setName(response.payload.name);
+        setImg(response.payload.img);
 
+        if (response.payload && response.payload.price) {
+          setPrice(response.payload.price);
+        } else {
+        }
+      }
+    };
+    fetchData();
+  }, []);
   const deleteItem = () => {
     // dispatch(cartActions.deleteItem(id));
   };
   return (
     <tr>
       <td className="text-center cart__img-box">
-        <img src={image01} alt="" />
+        <img src={img} alt="" />
       </td>
-      <td className="text-center">{title}</td>
+      <td className="text-center">{name}</td>
       <td className="text-center">${price}</td>
-      <td className="text-center">{quantity}px</td>
+      <td className="text-center">{quantity}</td>
       <td className="text-center cart__item-del">
         <i className="ri-delete-bin-line" onClick={deleteItem}></i>
       </td>

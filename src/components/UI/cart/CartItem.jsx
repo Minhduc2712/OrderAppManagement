@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ListGroupItem } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -11,37 +11,64 @@ import {
 } from "../../../store/shopping-cart/cartSliceReducer";
 import Cookies from "js-cookie";
 import { selectlistUser } from "../../../Redux/Selector/UserSelector";
+import { actionFetchProductById } from "../../../Redux/Reducer/MenuSliceReducer";
 
 const CartItem = ({ item, onClose }) => {
   const dispatch = useDispatch();
-  const { id, name, price, img, quantity } = item;
+  const { id, productPrice, quantity, productId } = item;
   const { data: User, status, error } = useSelector(selectlistUser);
 
   const tokenString = Cookies.get("userPayload");
+  const cartId = id;
   let userId;
+  const [img, setImg] = useState("");
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState();
 
   if (tokenString) {
     const token = JSON.parse(tokenString);
-    const jwtToken = token.jwtToken;
     userId = token.userId;
   }
 
-  const productId = id;
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        const response = await dispatch(actionFetchProductById(productId));
+        console.log("response", response.payload);
+        setName(response.payload.name);
+        setImg(response.payload.img);
+
+        if (response.payload && response.payload.price) {
+          setPrice(response.payload.price);
+        } else {
+        }
+      }
+    };
+    fetchData();
+  }, [tokenString]);
+
   const qty = 1;
-  const formValues = { productId, userId, qty, price };
-  console.log("formValues", formValues);
-  const incrementItem = () => {
-    dispatch(cartActions.addItem(formValues));
-    dispatch(addProducttoCart(formValues));
-  };
 
-  const decreaseItem = () => {
-    // dispatch(cartActions.removeItem(id));
-  };
+  const incrementItem = useCallback(() => {
+    const formValuesDB = { productId, userId, qty, price };
+    const formValuesLocal = { cartId, userId, qty, productPrice };
+    dispatch(cartActions.addItem(formValuesLocal));
+    dispatch(addProducttoCart(formValuesDB));
+  }, [productId, userId, quantity, productPrice, price, cartId]);
 
-  const deleteItem = () => {
-    // dispatch(cartActions.deleteItem(id));
-  };
+  const decrementItem = useCallback(() => {
+    const formValuesDB = { productId, userId, qty, price };
+    const formValuesLocal = { cartId, userId, qty, productPrice };
+    dispatch(cartActions.removeItem(formValuesLocal));
+    dispatch(addProducttoCart(formValuesDB));
+  }, [productId, userId, quantity, productPrice, price, cartId]);
+
+  const deleteItem = useCallback(() => {
+    const formValuesDB = { productId, userId, qty, price };
+    const formValuesLocal = { cartId, userId, qty, productPrice };
+    dispatch(cartActions.addItem(formValuesLocal));
+    dispatch(addProducttoCart(formValuesDB));
+  }, [productId, userId, quantity, productPrice, price, cartId]);
 
   return (
     <ListGroupItem className="border-0 cart__item">
@@ -52,14 +79,14 @@ const CartItem = ({ item, onClose }) => {
           <div>
             <h6 className="cart__product-title">{name}</h6>
             <p className=" d-flex align-items-center gap-5 cart__product-price">
-              {quantity}x <span>${price}</span>
+              {quantity}x <span>${quantity * price}</span>
             </p>
             <div className=" d-flex align-items-center justify-content-between increase__decrease-btn">
               <span className="increase__btn" onClick={incrementItem}>
                 <i class="ri-add-line"></i>
               </span>
               <span className="quantity">{quantity}</span>
-              <span className="decrease__btn" onClick={decreaseItem}>
+              <span className="decrease__btn" onClick={decrementItem}>
                 <i class="ri-subtract-line"></i>
               </span>
             </div>

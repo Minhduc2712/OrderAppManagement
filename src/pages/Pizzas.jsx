@@ -17,15 +17,8 @@ import { SearchBar } from "../components/SearchBar/SearchBar";
 import SortingDropdown from "../components/SortingBar/SortingDropdown";
 
 const Pizzas = () => {
-  const [pageNumber, setPageNumber] = useState(0);
-
   const dispatch = useDispatch();
   const stateRedux = useSelector((state) => state);
-  const {
-    data: searchedProduct,
-    status,
-    error,
-  } = useSelector(selectlistProduct);
   const {
     content: product,
     pageNo,
@@ -84,18 +77,18 @@ const Pizzas = () => {
     <Helmet title="All Pizzas">
       <Container>
         <Row>
-          <div className="search-bar-container">
-            <SearchBar />
-            <SearchResultsList />
-          </div>
-        </Row>
-        <Row>
-          <Col></Col>
-          {/* <Col></Col> */}
-          <Col>
-            <SortingDropdown onSort={handleSort} />
+          <Col lg="6" md="6" sm="6" xs="12" className="mb-5">
+            <div className="search-bar-container">
+              <SearchBar />
+              <SearchResultsList />
+            </div>
           </Col>
-          {/* <Col></Col> */}
+          <Col lg="6" md="6" sm="6" xs="12" className="mb-5">
+            <SortingDropdown
+              className="input-wrapper sorting__widget text-end "
+              onSort={handleSort}
+            />
+          </Col>
         </Row>
         <Row>
           {product.map((item) => (

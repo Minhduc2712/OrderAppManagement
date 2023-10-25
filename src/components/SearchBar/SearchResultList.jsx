@@ -8,6 +8,10 @@ import { Searchresult } from "./Searchresult.1";
 export const SearchResultsList = () => {
   const { data } = useSelector(selectlistSearchedProduct);
 
+  if (!data) {
+    return <div>No search results found.</div>;
+  }
+
   return (
     <div className="results-list">
       {data.map((result, id) => (

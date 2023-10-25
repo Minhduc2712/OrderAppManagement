@@ -26,6 +26,7 @@ export const login = createAsyncThunk(LOGIN, async (UserData) => {
 export const logout = createAsyncThunk(LOGOUT, async () => {
   await Logout();
   Cookies.remove("userPayload");
+  localStorage.clear();
   return null;
 });
 
@@ -39,6 +40,7 @@ const initialState = {
   data: [],
   error: null,
   isLoggedIn: isUserLoggedIn(),
+  isAdmin: false,
 };
 
 const UserSliceReducer = createSlice({
@@ -68,6 +70,8 @@ const UserSliceReducer = createSlice({
         state.status = "succeeded";
         state.data = action.payload.data;
         state.error = action.payload.message;
+        state.isAdmin = action.payload.data.roles.includes("admin");
+        console.log("isAdmin", state.isAdmin);
         state.isLoggedIn = true;
       })
       .addCase(login.rejected, (state, action) => {

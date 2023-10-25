@@ -24,17 +24,19 @@ export const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <div className="input-wrapper">
-      <FaSearch id="search-icon" />
+    <div className="input-wrapper search__widget d-flex align-items-center justify-content-between ">
       <input
-        style={{ margin: "20px" }}
-        placeholder="Type to search..."
+        type="text"
+        placeholder="I'm looking for...."
         value={input}
         onChange={(e) => {
           handleChange(e.target.value);
           debouncedSearch(e.target.value);
         }}
       />
+      <span>
+        <i class="ri-search-line"></i>
+      </span>
     </div>
   );
 };

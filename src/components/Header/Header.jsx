@@ -58,7 +58,6 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logout());
     localStorage.clear();
-    navigate("/login");
     window.location.reload();
   };
 
@@ -96,7 +95,7 @@ const Header = () => {
       }
     };
     fetchCartData();
-  }, [tokenString, data]);
+  }, [tokenString]);
 
   useEffect(() => {
     const handleScroll = () => {

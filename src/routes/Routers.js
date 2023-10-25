@@ -8,6 +8,7 @@ import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import AdminPage from "../pages/AdminPage";
 const Routers = () => {
   return (
     <Routes>
@@ -17,8 +18,9 @@ const Routers = () => {
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/pizzas/:id" element={<PizzaDetails />} />
-      <Route path="/login" element={<Login/>}/>
-      <Route path="/register" element={<Register/>}/>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/admin" element={<AdminPage />} />
     </Routes>
   );
 };
