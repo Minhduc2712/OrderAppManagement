@@ -4,10 +4,16 @@ import { Container, Button } from "@mui/material"; // Import Button from MUI
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  actionAddProductAPI,
   actionDeleteProductAPI,
   actionFetchListProductAPI,
 } from "../Redux/Reducer/MenuSliceReducer";
 import { selectlistProduct } from "../Redux/Selector/ProductSelector";
+import ModalCreateNewProduct from "../components/Product/ModalCreateNewProduct";
+import { formActions } from "../Redux/Reducer/FormSliceReducer";
+import { selectFormStatus } from "../Redux/Selector/FormSelector";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { actionFetchListCategoryAPI } from "../Redux/Reducer/CategorySliceReducer";
 
 export default function DataTable() {
   const dispatch = useDispatch();
@@ -15,6 +21,7 @@ export default function DataTable() {
 
   useEffect(() => {
     dispatch(actionFetchListProductAPI());
+    dispatch(actionFetchListCategoryAPI());
   }, [dispatch]);
 
   const columns = [
@@ -44,19 +51,22 @@ export default function DataTable() {
       type: "string",
       width: 90,
     },
-    // Add a custom column for buttons
     {
       field: "delete",
       headerName: "Delete",
       width: 120,
       renderCell: (params) => {
         const handleDelete = () => {
-          // Dispatch the action to delete the product
           dispatch(actionDeleteProductAPI(params.row.id));
         };
 
         return (
-          <Button variant="contained" color="error" onClick={handleDelete}>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleDelete}
+          >
             Delete
           </Button>
         );
@@ -76,23 +86,56 @@ export default function DataTable() {
 
   useEffect(() => {
     const handleProductDeleted = () => {
-      // Implement your logic to handle product deleted
       console.log("Product deleted. Reloading the page...");
       dispatch(actionFetchListProductAPI());
     };
 
-    // Listen to the "productDeleted" event
     document.addEventListener("productDeleted", handleProductDeleted);
 
     return () => {
-      // Clean up the event listener
       document.removeEventListener("productDeleted", handleProductDeleted);
     };
   }, [listProduct]);
 
+  // const { showForm: open } = useSelector(selectFormStatus);
+  // console.log("showForm", open);
+
+  const handleAddNewProduct = () => {
+    dispatch(formActions.showForm());
+  };
+
+  const onHandleClose = () => {
+    dispatch(formActions.closeForm());
+  };
+
+  const onHandleCreate = (values) => {
+    const productNewAPI = {
+      country: values.country,
+      img: values.img,
+      price: values.price,
+      rate: values.rate,
+      categoryId: values.category,
+      name: values.name,
+    };
+    console.log(productNewAPI);
+    dispatch(actionAddProductAPI(productNewAPI));
+    dispatch(formActions.closeForm());
+  };
+
   return (
     <Container>
       <div style={{ height: 400, width: "100%" }}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleAddNewProduct}
+        >
+          Add Product
+        </Button>
+        <ModalCreateNewProduct
+          onHandleClose={onHandleClose}
+          onHandleCreate={onHandleCreate}
+        />
         <DataGrid
           rows={rows}
           columns={columns}

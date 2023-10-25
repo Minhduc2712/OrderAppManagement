@@ -7,9 +7,13 @@ import ProductSliceReducer from "../Redux/Reducer/MenuSliceReducer";
 import UserSliceReducer from "../Redux/Reducer/UserSliceReducer";
 import PaginationSliceReducer from "../Redux/Reducer/PaginationSliceReducer";
 import cartSliceReducer from "./shopping-cart/cartSliceReducer";
+import FormSliceReducer from "../Redux/Reducer/FormSliceReducer";
+import CategorySliceReducer from "../Redux/Reducer/CategorySliceReducer";
 
 const store = configureStore({
   reducer: {
+    form: FormSliceReducer.reducer,
+    category: CategorySliceReducer.reducer,
     product: ProductSliceReducer.reducer,
     post: PaginationSliceReducer.reducer,
     user: UserSliceReducer.reducer,

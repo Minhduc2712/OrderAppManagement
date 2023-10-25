@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  addProductNewAPI,
   deleteProductAPI,
   getListProductAPI,
   getProductByIdAPI,
   searchProductAPI,
 } from "../../API/ProductApi";
 import {
+  ADD_PRODUCT,
   DELETE_PRODUCT,
   FETCH_LIST_PRODUCT,
   FETCH_PRODUCT_BY_ID,
@@ -38,6 +40,14 @@ export const actionFetchProductById = createAsyncThunk(
   async (id) => {
     let ProductAPI = await getProductByIdAPI(id);
     return ProductAPI;
+  }
+);
+
+export const actionAddProductAPI = createAsyncThunk(
+  ADD_PRODUCT,
+  async (Values) => {
+    let reponse = await addProductNewAPI(Values);
+    return reponse;
   }
 );
 
@@ -108,6 +118,18 @@ const ProductSliceReducer = createSlice({
         state.error = null;
       })
       .addCase(actionDeleteProductAPI.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(actionAddProductAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(actionAddProductAPI.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.listData = action.payload.data;
+        state.error = null;
+      })
+      .addCase(actionAddProductAPI.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });
