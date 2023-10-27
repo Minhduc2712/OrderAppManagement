@@ -11,9 +11,7 @@ import {
   getCartsByUserId,
   removeProductFromCart,
 } from "../../API/CartApi";
-import { values } from "lodash";
 
-// Function to update local storage and state
 const updateLocalStorage = (state) => {
   localStorage.setItem("cart", JSON.stringify(state.data));
   localStorage.setItem("totalAmount", JSON.stringify(state.totalAmount));

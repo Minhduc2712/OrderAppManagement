@@ -12,13 +12,9 @@ import { Col, Row } from "reactstrap";
 const Register = () => {
   const [successful, setSuccessful] = useState(false);
 
-  const { data: User, status, error } = useSelector(selectlistUser);
+  const { error } = useSelector(selectlistUser);
   const message = error;
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    // dispatch(clearMessage());
-  }, [dispatch]);
 
   const initialValues = {
     firstName: "",

@@ -3,9 +3,9 @@ import { selectlistUser } from "../Redux/Selector/UserSelector";
 import { Navigate } from "react-router-dom";
 
 export const ProtectedRoute = ({ children }) => {
-  const { isAdmin: isAdmin } = useSelector(selectlistUser);
-  console.log("isAdmin", isAdmin);
-  if (!isAdmin) {
+  const { isAdmin: admin } = useSelector(selectlistUser);
+  console.log("isAdmin", admin);
+  if (!admin) {
     return <Navigate to="/" />;
   }
   return children;

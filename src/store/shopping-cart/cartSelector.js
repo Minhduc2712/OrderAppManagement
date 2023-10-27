@@ -1,5 +1,4 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { data } from "jquery";
 
 const cartProductSelector = (state) => state.cart.data;
 const totalQuantitySelector = (state) => state.cart.totalQuantity;

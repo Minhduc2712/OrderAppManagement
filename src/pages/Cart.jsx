@@ -94,7 +94,7 @@ const Tr = ({ item }) => {
       }
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
   const deleteItem = () => {
     // dispatch(cartActions.deleteItem(id));
   };
