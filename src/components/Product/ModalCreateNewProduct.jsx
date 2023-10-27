@@ -20,14 +20,14 @@ import { selectlistCategory } from "../../Redux/Selector/CategorySelector";
 const ModalCreateNewProduct = (props) => {
   const { onHandleClose, onHandleCreate } = props;
   const { data: listCategory } = useSelector(selectlistCategory);
-  const { showForm: isOpen } = useSelector(selectFormStatus);
+  const { showFormCreate: isOpen } = useSelector(selectFormStatus);
 
   const initialValues = {
     name: "",
     img: "",
     country: "",
     price: "",
-    rate: 0, // Provide a default value for rate
+    rate: 0,
     category: "",
   };
 
@@ -43,7 +43,7 @@ const ModalCreateNewProduct = (props) => {
     if (!values.name || !values.country || !values.price || !values.category) {
       alert("Please fill in all required fields");
     } else {
-      console.log(values);
+      console.log("values", values);
       onHandleCreate(values);
     }
   };
@@ -63,12 +63,13 @@ const ModalCreateNewProduct = (props) => {
   return (
     <Modal
       isOpen={isOpen}
-      // onClose={handleClose}
+      onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <Formik
         initialValues={initialValues}
+        enableReinitialize={true}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >

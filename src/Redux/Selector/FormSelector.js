@@ -1,8 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { showForm } from "../Reducer/FormSliceReducer";
 
-const formSelector = (state) => state.form.showForm;
+const formCreateSelector = (state) => state.form.showFormCreate;
+const formEditSelector = (state) => state.form.showFormEdit;
 
-export const selectFormStatus = createSelector([formSelector], (showForm) => {
-  return { showForm: showForm };
-});
+export const selectFormStatus = createSelector(
+  [formCreateSelector, formEditSelector],
+  (showFormCreate, showFormEdit) => {
+    return { showFormCreate: showFormCreate, showFormEdit: showFormEdit };
+  }
+);

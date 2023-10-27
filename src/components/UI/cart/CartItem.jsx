@@ -8,10 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addProducttoCart,
   cartActions,
+  decrementProductFromCart,
+  deleteProductFromCart,
 } from "../../../store/shopping-cart/cartSliceReducer";
 import Cookies from "js-cookie";
 import { selectlistUser } from "../../../Redux/Selector/UserSelector";
 import { actionFetchProductById } from "../../../Redux/Reducer/MenuSliceReducer";
+import { removeProductFromCart } from "../../../API/CartApi";
 
 const CartItem = ({ item, onClose }) => {
   const dispatch = useDispatch();
@@ -51,23 +54,17 @@ const CartItem = ({ item, onClose }) => {
 
   const incrementItem = useCallback(() => {
     const formValuesDB = { productId, userId, qty, price };
-    const formValuesLocal = { cartId, userId, qty, productPrice };
-    dispatch(cartActions.addItem(formValuesLocal));
     dispatch(addProducttoCart(formValuesDB));
   }, [productId, userId, quantity, productPrice, price, cartId]);
 
   const decrementItem = useCallback(() => {
-    const formValuesDB = { productId, userId, qty, price };
-    const formValuesLocal = { cartId, userId, qty, productPrice };
-    dispatch(cartActions.removeItem(formValuesLocal));
-    dispatch(addProducttoCart(formValuesDB));
+    const formValuesDB = { cartId, productId, userId, price };
+    dispatch(decrementProductFromCart(formValuesDB));
   }, [productId, userId, quantity, productPrice, price, cartId]);
 
   const deleteItem = useCallback(() => {
-    const formValuesDB = { productId, userId, qty, price };
-    const formValuesLocal = { cartId, userId, qty, productPrice };
-    dispatch(cartActions.addItem(formValuesLocal));
-    dispatch(addProducttoCart(formValuesDB));
+    const formValuesDB = { cartId, userId };
+    dispatch(deleteProductFromCart(formValuesDB));
   }, [productId, userId, quantity, productPrice, price, cartId]);
 
   return (

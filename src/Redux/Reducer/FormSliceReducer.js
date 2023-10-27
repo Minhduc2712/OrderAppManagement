@@ -1,20 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  showForm: false,
+  showFormCreate: false,
+  showFormEdit: false,
 };
 
 const formSliceReducer = createSlice({
   name: "form",
   initialState,
   reducers: {
-    showForm: (state) => {
-      state.showForm = true;
+    showFormCreate: (state) => {
+      state.showFormCreate = true;
+    },
+
+    showFormEdit: (state) => {
+      state.showFormEdit = true;
     },
 
     // Action to close the form
     closeForm: (state) => {
-      state.showForm = false;
+      state.showFormCreate = false;
+      state.showFormEdit = false;
     },
   },
 });

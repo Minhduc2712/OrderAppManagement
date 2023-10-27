@@ -1,28 +1,47 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Container, Button } from "@mui/material"; // Import Button from MUI
-import { useEffect } from "react";
+import { Container, Button } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actionAddProductAPI,
   actionDeleteProductAPI,
   actionFetchListProductAPI,
+  actionFetchProductById,
 } from "../Redux/Reducer/MenuSliceReducer";
 import { selectlistProduct } from "../Redux/Selector/ProductSelector";
 import ModalCreateNewProduct from "../components/Product/ModalCreateNewProduct";
 import { formActions } from "../Redux/Reducer/FormSliceReducer";
-import { selectFormStatus } from "../Redux/Selector/FormSelector";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+  deleteProductFromCart,
+  getProductCartsByUserId,
+} from "../store/shopping-cart/cartSliceReducer";
+import { selectlistProductCart } from "../store/shopping-cart/cartSelector";
+import Cookies from "js-cookie";
 import { actionFetchListCategoryAPI } from "../Redux/Reducer/CategorySliceReducer";
 
 export default function DataTable() {
   const dispatch = useDispatch();
   const { listData: listProduct } = useSelector(selectlistProduct);
+  const { data: cartProducts } = useSelector(selectlistProductCart);
+  const cartId = cartProducts.id;
+
+  const tokenString = Cookies.get("userPayload");
+  let userId;
+  if (tokenString) {
+    const token = JSON.parse(tokenString);
+    userId = token.userId;
+  }
+
+  const [productId, setProductId] = useState(0);
 
   useEffect(() => {
-    dispatch(actionFetchListProductAPI());
     dispatch(actionFetchListCategoryAPI());
-  }, [dispatch]);
+    dispatch(actionFetchListProductAPI());
+    dispatch(getProductCartsByUserId(userId));
+  }, [dispatch, userId]);
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -31,7 +50,7 @@ export default function DataTable() {
     {
       field: "img",
       headerName: "Image",
-      width: 90,
+      width: 180,
     },
     {
       field: "price",
@@ -49,7 +68,7 @@ export default function DataTable() {
       field: "categoryName",
       headerName: "CategoryName",
       type: "string",
-      width: 90,
+      width: 120,
     },
     {
       field: "delete",
@@ -58,6 +77,10 @@ export default function DataTable() {
       renderCell: (params) => {
         const handleDelete = () => {
           dispatch(actionDeleteProductAPI(params.row.id));
+          if (cartId) {
+            const formValuesDB = { cartId, userId };
+            dispatch(deleteProductFromCart(formValuesDB));
+          }
         };
 
         return (
@@ -68,6 +91,28 @@ export default function DataTable() {
             onClick={handleDelete}
           >
             Delete
+          </Button>
+        );
+      },
+    },
+    {
+      field: "update",
+      headerName: "Update",
+      width: 120,
+      renderCell: (params) => {
+        const handleEditProduct = () => {
+          dispatch(formActions.showFormEdit());
+          onHandleEdit(params.row.id);
+          setProductId(params.row.id);
+        };
+        return (
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<EditIcon />}
+            onClick={handleEditProduct}
+          >
+            Edit
           </Button>
         );
       },
@@ -97,11 +142,8 @@ export default function DataTable() {
     };
   }, [listProduct]);
 
-  // const { showForm: open } = useSelector(selectFormStatus);
-  // console.log("showForm", open);
-
   const handleAddNewProduct = () => {
-    dispatch(formActions.showForm());
+    dispatch(formActions.showFormCreate());
   };
 
   const onHandleClose = () => {
@@ -122,6 +164,10 @@ export default function DataTable() {
     dispatch(formActions.closeForm());
   };
 
+  const onHandleEdit = (id) => {
+    dispatch(actionFetchProductById(id));
+  };
+
   return (
     <Container>
       <div style={{ height: 400, width: "100%" }}>
@@ -139,12 +185,7 @@ export default function DataTable() {
         <DataGrid
           rows={rows}
           columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
+          pageSize={5}
           checkboxSelection
         />
       </div>

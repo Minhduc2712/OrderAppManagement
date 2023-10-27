@@ -57,7 +57,7 @@ const ProductCard = ({ item }) => {
     const qty = 1;
     const formValuesDB = { productId, userId, qty, price };
     const formValuesLocal = { cartId, userId, qty, productPrice };
-    dispatch(cartActions.addItem(formValuesLocal));
+    // dispatch(cartActions.addItem(formValuesLocal));
     dispatch(addProducttoCart(formValuesDB));
   };
 

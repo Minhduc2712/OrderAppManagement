@@ -1,9 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   ADD_PRODUCT_TO_CART,
+  DECREMENT_PRODUCT_FROM_CART,
+  DELETE_PODUCT_FROM_CART,
   GET_CART_BY_USERID,
 } from "../../Redux/ActionType/ActionType";
-import { addCartwithProduct, getCartsByUserId } from "../../API/CartApi";
+import {
+  addCartwithProduct,
+  decrementProducfromCart,
+  getCartsByUserId,
+  removeProductFromCart,
+} from "../../API/CartApi";
+import { values } from "lodash";
 
 // Function to update local storage and state
 const updateLocalStorage = (state) => {
@@ -42,78 +50,26 @@ export const getProductCartsByUserId = createAsyncThunk(
   }
 );
 
+export const deleteProductFromCart = createAsyncThunk(
+  DELETE_PODUCT_FROM_CART,
+  async (values) => {
+    let cartDelete = await removeProductFromCart(values);
+    return cartDelete;
+  }
+);
+
+export const decrementProductFromCart = createAsyncThunk(
+  DECREMENT_PRODUCT_FROM_CART,
+  async (values) => {
+    let cartDecrement = await decrementProducfromCart(values);
+    return cartDecrement;
+  }
+);
+
 const cartSliceReducer = createSlice({
   name: "cart",
   initialState,
-  reducers: {
-    addItem(state, action) {
-      const newItem = action.payload;
-      const existingItem = state.data.find(
-        (item) => item.id === newItem.cartId
-      );
-
-      state.totalQuantity++;
-
-      if (!existingItem) {
-        state.data.push({
-          id: newItem.cartId,
-          userId: newItem.userId,
-          price: newItem.productPrice,
-          quantity: newItem.quantity,
-        });
-      } else {
-        existingItem.quantity += newItem.quantity;
-        existingItem.price += Number(newItem.price);
-      }
-
-      state.totalAmount = state.data.reduce(
-        (total, item) => total + Number(item.price) * Number(item.quantity),
-        0
-      );
-
-      // Update local storage
-      updateLocalStorage(state);
-    },
-
-    removeItem(state, action) {
-      const id = action.payload;
-      const existingItem = state.data.find((item) => item.id === id);
-      state.totalQuantity--;
-
-      if (existingItem.quantity === 1) {
-        state.data = state.data.filter((item) => item.id !== id);
-      } else {
-        existingItem.quantity--;
-        existingItem.price -= Number(existingItem.price);
-      }
-
-      state.totalAmount = state.data.reduce(
-        (total, item) => total + Number(item.price) * Number(item.quantity),
-        0
-      );
-
-      // Update local storage
-      updateLocalStorage(state);
-    },
-
-    deleteItem(state, action) {
-      const id = action.payload;
-      const existingItem = state.data.find((item) => item.id === id);
-
-      if (existingItem) {
-        state.data = state.data.filter((item) => item.id !== id);
-        state.totalQuantity -= existingItem.quantity;
-      }
-
-      state.totalAmount = state.data.reduce(
-        (total, item) => total + Number(item.price) * Number(item.quantity),
-        0
-      );
-
-      // Update local storage
-      updateLocalStorage(state);
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(addProducttoCart.pending, (state) => {
@@ -126,7 +82,6 @@ const cartSliceReducer = createSlice({
         state.totalQuantity = action.payload.data.totalQuantity;
         state.error = null;
 
-        // Update local storage
         updateLocalStorage(state);
       })
       .addCase(addProducttoCart.rejected, (state, action) => {
@@ -143,10 +98,41 @@ const cartSliceReducer = createSlice({
         state.totalQuantity = action.payload.data.totalQuantity;
         state.error = null;
 
-        // Update local storage
         updateLocalStorage(state);
       })
       .addCase(getProductCartsByUserId.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(deleteProductFromCart.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteProductFromCart.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.data = action.payload.data.cart;
+        state.totalAmount = action.payload.data.totalAmount;
+        state.totalQuantity = action.payload.data.totalQuantity;
+        state.error = null;
+
+        updateLocalStorage(state);
+      })
+      .addCase(deleteProductFromCart.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(decrementProductFromCart.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(decrementProductFromCart.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.data = action.payload.data.cart;
+        state.totalAmount = action.payload.data.totalAmount;
+        state.totalQuantity = action.payload.data.totalQuantity;
+        state.error = null;
+
+        updateLocalStorage(state);
+      })
+      .addCase(decrementProductFromCart.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });

@@ -4,12 +4,16 @@ const addCartwithProduct = (addToCart) => {
   return api("POST", "cart/addProduct", addToCart);
 };
 
+const decrementProducfromCart = (decrementItem) => {
+  return api("POST", "cart/decrementProduct", decrementItem);
+};
+
 const updateQtyForCart = (upateQty) => {
   return api("POST", "cart/updateQtyFor", upateQty);
 };
 
-const removeProductFromCart = () => {
-  return api("DELETE", "cart/removeProductFromCart", null);
+const removeProductFromCart = (removeItem) => {
+  return api("DELETE", "cart/removeProductFromCart", removeItem);
 };
 
 const getCartsByUserId = (id) => {
@@ -19,6 +23,7 @@ const getCartsByUserId = (id) => {
 
 export {
   addCartwithProduct,
+  decrementProducfromCart,
   updateQtyForCart,
   removeProductFromCart,
   getCartsByUserId,
