@@ -6,8 +6,6 @@ import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/common-section/CommonSection";
 import { Container, Row, Col } from "reactstrap";
 import ExtraIngredient from "../components/ExtraIngredient/ExtraIngredient.jsx";
-import { useDispatch } from "react-redux";
-// import { cartActions } from "../store/shopping-cart/cartSlice";
 import { useSelector } from "react-redux";
 
 import "../styles/product-details.css";
@@ -29,14 +27,13 @@ const ExtraIngredients = {
 
 const PizzaDetails = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
   const [extraIngredients, setExtraIngredients] = useState([]);
   const [isUpdateNotificationDisplayed, setIsUpdateNotificationDisplayed] =
     useState(false);
   const product = products.find((product) => product.id === id);
   const cartProducts = useSelector((state) => state.cart.cartItems);
   const [previewImg, setPreviewImg] = useState(product.image01);
-  const { title, price, category, desc, image01 } = product;
+  const { title, price, category, desc } = product;
   const relatedProduct = products.filter((item) => category === item.category);
 
   useEffect(() => {
@@ -53,16 +50,6 @@ const PizzaDetails = () => {
     setTimeout(function () {
       setIsUpdateNotificationDisplayed(false);
     }, 3000);
-
-    // dispatch(
-    //   cartActions.addItem({
-    //     id,
-    //     title,
-    //     price,
-    //     image01,
-    //     extraIngredients,
-    //   })
-    // );
   };
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ListGroup } from "reactstrap";
 import { Link } from "react-router-dom";
 import CartItem from "./CartItem";
@@ -9,12 +9,9 @@ import { selectlistProductCart } from "../../../store/shopping-cart/cartSelector
 
 const Carts = () => {
   const dispatch = useDispatch();
-  const {
-    data: cartProducts,
-    totalAmount,
-    totalQuantity,
-  } = useSelector(selectlistProductCart);
-  console.log("cart", cartProducts);
+  const { data: cartProducts, totalAmount } = useSelector(
+    selectlistProductCart
+  );
 
   const toggleCart = () => {
     dispatch(cartUiActions.toggle());

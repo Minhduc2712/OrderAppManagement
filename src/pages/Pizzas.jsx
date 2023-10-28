@@ -6,7 +6,6 @@ import ReactPaginate from "react-paginate";
 import "../styles/pagination.css";
 import "../styles/search-section.css";
 import { useDispatch, useSelector } from "react-redux";
-import { selectlistProduct } from "../Redux/Selector/ProductSelector";
 import { actionFetchListProductAPI } from "../Redux/Reducer/MenuSliceReducer";
 import { selectlistFilteredProduct } from "../Redux/Selector/PaginationSelector";
 import { actionFetchPaginationListProductAPI } from "../Redux/Reducer/PaginationSliceReducer";
@@ -18,12 +17,10 @@ import SortingDropdown from "../components/SortingBar/SortingDropdown";
 
 const Pizzas = () => {
   const dispatch = useDispatch();
-  const stateRedux = useSelector((state) => state);
   const {
     content: product,
     pageNo,
     pageSize,
-    totalElements,
     totalPages,
   } = useSelector(selectlistFilteredProduct);
 
