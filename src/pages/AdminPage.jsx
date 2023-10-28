@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Container, Button } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actionAddProductAPI,
@@ -34,8 +34,6 @@ export default function DataTable() {
     const token = JSON.parse(tokenString);
     userId = token.userId;
   }
-
-  const [productId, setProductId] = useState(0);
 
   useEffect(() => {
     dispatch(actionFetchListCategoryAPI());
@@ -103,7 +101,6 @@ export default function DataTable() {
         const handleEditProduct = () => {
           dispatch(formActions.showFormEdit());
           onHandleEdit(params.row.id);
-          setProductId(params.row.id);
         };
         return (
           <Button
@@ -140,7 +137,7 @@ export default function DataTable() {
     return () => {
       document.removeEventListener("productDeleted", handleProductDeleted);
     };
-  }, [listProduct]);
+  }, [dispatch, listProduct]);
 
   const handleAddNewProduct = () => {
     dispatch(formActions.showFormCreate());

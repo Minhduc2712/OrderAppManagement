@@ -1,25 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ListGroupItem } from "reactstrap";
-import { useNavigate } from "react-router-dom";
 
 import "../../../styles/cart-item.css";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   addProducttoCart,
-  cartActions,
   decrementProductFromCart,
   deleteProductFromCart,
 } from "../../../store/shopping-cart/cartSliceReducer";
 import Cookies from "js-cookie";
-import { selectlistUser } from "../../../Redux/Selector/UserSelector";
 import { actionFetchProductById } from "../../../Redux/Reducer/MenuSliceReducer";
-import { removeProductFromCart } from "../../../API/CartApi";
 
 const CartItem = ({ item, onClose }) => {
   const dispatch = useDispatch();
-  const { id, productPrice, quantity, productId } = item;
-  const { data: User, status, error } = useSelector(selectlistUser);
+  const { id, quantity, productId } = item;
 
   const tokenString = Cookies.get("userPayload");
   const cartId = id;
@@ -48,24 +43,24 @@ const CartItem = ({ item, onClose }) => {
       }
     };
     fetchData();
-  }, [tokenString]);
+  }, [dispatch, id, productId, tokenString]);
 
   const qty = 1;
 
   const incrementItem = useCallback(() => {
     const formValuesDB = { productId, userId, qty, price };
     dispatch(addProducttoCart(formValuesDB));
-  }, [productId, userId, quantity, productPrice, price, cartId]);
+  }, [dispatch, productId, userId, price]);
 
   const decrementItem = useCallback(() => {
     const formValuesDB = { cartId, productId, userId, price };
     dispatch(decrementProductFromCart(formValuesDB));
-  }, [productId, userId, quantity, productPrice, price, cartId]);
+  }, [dispatch, productId, userId, price, cartId]);
 
   const deleteItem = useCallback(() => {
     const formValuesDB = { cartId, userId };
     dispatch(deleteProductFromCart(formValuesDB));
-  }, [productId, userId, quantity, productPrice, price, cartId]);
+  }, [dispatch, userId, cartId]);
 
   return (
     <ListGroupItem className="border-0 cart__item">

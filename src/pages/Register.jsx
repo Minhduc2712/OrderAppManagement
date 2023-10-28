@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -63,8 +63,6 @@ const Register = () => {
   });
 
   const handleRegister = (formValue) => {
-    const { firstName, lastName, username, email, password } = formValue;
-
     setSuccessful(false);
 
     dispatch(register(formValue))

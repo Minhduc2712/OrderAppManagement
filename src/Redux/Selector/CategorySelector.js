@@ -1,5 +1,4 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { data } from "jquery";
 
 const listCategorySelector = (state) => state.category.data;
 const statusSelector = (state) => state.category.status;

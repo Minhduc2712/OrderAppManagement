@@ -15,7 +15,7 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const { data: user, status, error, isLoggedIn } = useSelector(selectlistUser);
+  const { data: user, error, isLoggedIn } = useSelector(selectlistUser);
 
   const initialValues = {
     username: "",

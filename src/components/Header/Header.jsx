@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "reactstrap";
 import logo from "../../assets/images/res-logo.png";
@@ -31,29 +31,13 @@ const Header = () => {
   const headerRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data: user, isLoggedIn } = useSelector(selectlistUser);
-  const { data, totalQuantity, status } = useSelector(selectlistProductCart);
+  const { isLoggedIn } = useSelector(selectlistUser);
+  const { totalQuantity } = useSelector(selectlistProductCart);
 
   const toggleMenu = () => menuRef.current.classList.toggle("show__menu");
   const toggleCart = () => dispatch(cartUiActions.toggle());
 
   const tokenString = Cookies.get("userPayload");
-
-  const isUserLoggedIn = () => {
-    if (tokenString) {
-      try {
-        const token = JSON.parse(tokenString);
-        const jwtToken = token.jwtToken;
-        const decodedToken = jwt_decode(jwtToken);
-        const currentTime = Date.now() / 1000;
-        return decodedToken.exp > currentTime;
-      } catch (error) {
-        console.error("Invalid token:", error);
-        return false;
-      }
-    }
-    return false;
-  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -76,7 +60,6 @@ const Header = () => {
             const savedCart = localStorage.getItem("cart");
 
             if (savedCart) {
-              const parsedCart = JSON.parse(savedCart);
             } else {
               const response = await dispatch(getProductCartsByUserId(userId));
               if (response.payload.data && response.payload.data.cart) {
@@ -95,7 +78,7 @@ const Header = () => {
       }
     };
     fetchCartData();
-  }, [tokenString]);
+  }, [dispatch, tokenString]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -115,13 +98,29 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
+    const isUserLoggedIn = () => {
+      if (tokenString) {
+        try {
+          const token = JSON.parse(tokenString);
+          const jwtToken = token.jwtToken;
+          const decodedToken = jwt_decode(jwtToken);
+          const currentTime = Date.now() / 1000;
+          return decodedToken.exp > currentTime;
+        } catch (error) {
+          console.error("Invalid token:", error);
+          return false;
+        }
+      }
+      return false;
+    };
+
     if (!isLoggedIn) {
       const loggedIn = isUserLoggedIn();
       if (loggedIn) {
         navigate("/");
       }
     }
-  }, [isLoggedIn]);
+  }, [tokenString, navigate, isLoggedIn]);
 
   return (
     <header className="header" ref={headerRef}>

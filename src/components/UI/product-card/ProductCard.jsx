@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import Cookies from "js-cookie";
 
 import "../../../styles/product-card.css";
-import { selectlistUser } from "../../../Redux/Selector/UserSelector";
-import {
-  addProducttoCart,
-  cartActions,
-  getProductCartsByUserId,
-} from "../../../store/shopping-cart/cartSliceReducer";
-import { selectlistProductCart } from "../../../store/shopping-cart/cartSelector";
-import { getCartsByUserId } from "../../../API/CartApi";
+import { addProducttoCart } from "../../../store/shopping-cart/cartSliceReducer";
 
 const ProductCard = ({ item }) => {
   const dispatch = useDispatch();
@@ -20,11 +13,7 @@ const ProductCard = ({ item }) => {
 
   const tokenString = Cookies.get("userPayload");
   let userId = null;
-  let cartId = null;
-  let productPrice = null;
   const productId = id;
-
-  const [responseCart, setResponseCart] = useState([]);
 
   if (tokenString) {
     const token = JSON.parse(tokenString);
@@ -32,32 +21,8 @@ const ProductCard = ({ item }) => {
   }
 
   const addToCart = async () => {
-    const fetchData = async () => {
-      if (userId) {
-        const response = await dispatch(getProductCartsByUserId(userId));
-        const cartItems = response.payload.data.cart;
-
-        setResponseCart(cartItems);
-
-        // Check if the product is already in the cart
-        const existingCartItem = cartItems.find(
-          (cartItem) => cartItem.productId === productId
-        );
-
-        if (existingCartItem) {
-          cartId = existingCartItem.id;
-          productPrice = existingCartItem.price;
-          console.log("cartId", cartId);
-        }
-      }
-    };
-    fetchData();
-    console.log("productId", productId);
-    console.log("id", id);
     const qty = 1;
     const formValuesDB = { productId, userId, qty, price };
-    const formValuesLocal = { cartId, userId, qty, productPrice };
-    // dispatch(cartActions.addItem(formValuesLocal));
     dispatch(addProducttoCart(formValuesDB));
   };
 

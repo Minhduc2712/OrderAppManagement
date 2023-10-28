@@ -1,5 +1,4 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { data } from "jquery";
 
 const listProductSelector = (state) => state.product.listData;
 const productByIdSelector = (state) => state.product.dataById;

@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { useState } from "react";
 import debounce from "lodash/debounce";
 
 import "./SearchBar.css";
