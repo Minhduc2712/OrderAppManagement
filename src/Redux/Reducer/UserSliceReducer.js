@@ -26,6 +26,7 @@ export const login = createAsyncThunk(LOGIN, async (UserData) => {
 export const logout = createAsyncThunk(LOGOUT, async () => {
   await Logout();
   Cookies.remove("userPayload");
+  Cookies.clear();
   localStorage.clear();
   return null;
 });
