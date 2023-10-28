@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import CommonSection from "../components/UI/common-section/CommonSection";
 import Helmet from "../components/Helmet/Helmet";
@@ -7,17 +7,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { Container, Row, Col } from "reactstrap";
 
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
-import { getProductCartsByUserId } from "../store/shopping-cart/cartSliceReducer";
+
+import { deleteProductFromCart } from "../store/shopping-cart/cartSliceReducer";
 import { actionFetchProductById } from "../Redux/Reducer/MenuSliceReducer";
+import Cookies from "js-cookie";
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.data);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
-
-  const dispatch = useDispatch();
-  const token = Cookies.get("userPayload");
 
   return (
     <Helmet title="Cart">
@@ -78,7 +75,14 @@ const Tr = ({ item }) => {
   const [img, setImg] = useState("");
   const [name, setName] = useState("");
   const [price, setPrice] = useState();
-  const { id, productPrice, quantity, productId } = item;
+  const { id, quantity, productId } = item;
+  const cartId = id;
+  const tokenString = Cookies.get("userPayload");
+  let userId;
+  if (tokenString) {
+    const token = JSON.parse(tokenString);
+    userId = token.userId;
+  }
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
@@ -94,10 +98,11 @@ const Tr = ({ item }) => {
       }
     };
     fetchData();
-  }, [dispatch]);
-  const deleteItem = () => {
-    // dispatch(cartActions.deleteItem(id));
-  };
+  }, [dispatch, id, productId]);
+  const deleteItem = useCallback(() => {
+    const formValuesDB = { cartId, userId };
+    dispatch(deleteProductFromCart(formValuesDB));
+  }, [dispatch, userId, cartId]);
   return (
     <tr>
       <td className="text-center cart__img-box">
