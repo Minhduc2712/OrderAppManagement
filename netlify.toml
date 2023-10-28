@@ -8,7 +8,7 @@
 
 ## This rule redirects to an external API, signing requests with a secret
 [[redirects]]
-  from = "/home"
+  from = "/login"
   to = "https://magnificent-squirrel-3ac16a.netlify.app/home"
   status = 200
   force = true # COMMENT: ensure that we always redirect
