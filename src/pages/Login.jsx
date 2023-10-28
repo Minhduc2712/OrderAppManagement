@@ -42,7 +42,7 @@ const Login = () => {
         jwtToken: jwtToken,
       };
       saveTokenToCookie(userPayload);
-      // dispatch(getProductCartsByUserId(userId));
+      dispatch(getProductCartsByUserId(userId));
       navigate("/home");
     } catch (error) {
       setLoading(false);

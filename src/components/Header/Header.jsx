@@ -42,6 +42,7 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logout());
     localStorage.clear();
+    Cookies.remove("userPayload");
     window.location.reload();
   };
 
