@@ -6,7 +6,7 @@ import ReactPaginate from "react-paginate";
 import "../styles/pagination.css";
 import "../styles/search-section.css";
 import { useDispatch, useSelector } from "react-redux";
-import { actionFetchListProductAPI } from "../Redux/Reducer/MenuSliceReducer";
+// import { actionFetchListProductAPI } from "../Redux/Reducer/MenuSliceReducer";
 import { selectlistFilteredProduct } from "../Redux/Selector/PaginationSelector";
 import { actionFetchPaginationListProductAPI } from "../Redux/Reducer/PaginationSliceReducer";
 import queryString from "query-string";
@@ -42,9 +42,7 @@ const Pizzas = () => {
       const paramsString = queryString.stringify(filters);
       console.log(paramsString);
       dispatch(actionFetchPaginationListProductAPI(`${paramsString}`));
-      dispatch(actionFetchListProductAPI());
     }
-    dispatch(actionFetchListProductAPI());
   }, [dispatch, filters]);
 
   $(document).ready(function () {
