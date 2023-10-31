@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import guyImg from "../assets/images/hero.png";
 import "../styles/hero-section.css";
 import "../styles/home.css";
-import PopularFood from "../components/Product/PopularFood.jsx";
+// import PopularFood from "../components/Product/PopularFood.jsx";
 
 const Home = () => {
   return (
@@ -46,9 +46,7 @@ const Home = () => {
             </Col>
           </Row>
           <Row>
-            <Col lg="12">
-              <PopularFood />
-            </Col>
+            <Col lg="12">{/* <PopularFood /> */}</Col>
           </Row>
         </Container>
       </section>
