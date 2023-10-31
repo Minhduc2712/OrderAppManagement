@@ -44,6 +44,7 @@ const Pizzas = () => {
       dispatch(actionFetchPaginationListProductAPI(`${paramsString}`));
       dispatch(actionFetchListProductAPI());
     }
+    dispatch(actionFetchListProductAPI());
   }, [dispatch, filters]);
 
   $(document).ready(function () {
