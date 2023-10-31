@@ -22,6 +22,11 @@ const getProductByIdAPI = (id) => {
   return api("GET", url, null);
 };
 
+const getProductByCategoryIdAPI = (id) => {
+  let url = "product/category/" + id;
+  return api("GET", url, null);
+};
+
 const addProductNewAPI = (ProductNew) => {
   return api("POST", "product/", ProductNew);
 };
@@ -53,6 +58,7 @@ export {
   getListProductAPI,
   getListFilterdProductAPI,
   getProductByIdAPI,
+  getProductByCategoryIdAPI,
   addProductNewAPI,
   deleteProductAPI,
   updateProductAPI,

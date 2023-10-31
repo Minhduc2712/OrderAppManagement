@@ -10,9 +10,8 @@ import {
   deleteProductFromCart,
 } from "../../../store/shopping-cart/cartSliceReducer";
 import Cookies from "js-cookie";
-import { actionFetchProductById } from "../../../Redux/Reducer/MenuSliceReducer";
 
-const CartItem = ({ item, onClose }) => {
+const CartItem = ({ item, onClose, products }) => {
   const dispatch = useDispatch();
   const { id, quantity, productId } = item;
 
@@ -29,21 +28,15 @@ const CartItem = ({ item, onClose }) => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        const response = await dispatch(actionFetchProductById(productId));
-        console.log("response", response.payload);
-        setName(response.payload.name);
-        setImg(response.payload.img);
-
-        if (response.payload && response.payload.price) {
-          setPrice(response.payload.price);
-        } else {
-        }
+    if (productId && products) {
+      const product = products.find((product) => product.id === productId);
+      if (product) {
+        setImg(product.img);
+        setName(product.name);
+        setPrice(product.price);
       }
-    };
-    fetchData();
-  }, [dispatch, id, productId, tokenString]);
+    }
+  }, [productId, products]);
 
   const qty = 1;
 
@@ -75,17 +68,17 @@ const CartItem = ({ item, onClose }) => {
             </p>
             <div className=" d-flex align-items-center justify-content-between increase__decrease-btn">
               <span className="increase__btn" onClick={incrementItem}>
-                <i class="ri-add-line"></i>
+                <i className="ri-add-line"></i>
               </span>
               <span className="quantity">{quantity}</span>
               <span className="decrease__btn" onClick={decrementItem}>
-                <i class="ri-subtract-line"></i>
+                <i className="ri-subtract-line"></i>
               </span>
             </div>
           </div>
 
           <span className="delete__btn" onClick={deleteItem}>
-            <i class="ri-close-line"></i>
+            <i className="ri-close-line"></i>
           </span>
         </div>
       </div>

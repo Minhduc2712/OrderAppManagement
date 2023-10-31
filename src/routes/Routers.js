@@ -9,7 +9,7 @@ import Checkout from "../pages/Checkout";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import AdminPage from "../pages/AdminPage";
-import { ProtectedRoute } from "./ProtectedRoute";
+
 const Routers = () => {
   return (
     <Routes>
@@ -21,9 +21,7 @@ const Routers = () => {
       <Route path="/pizzas/:id" element={<PizzaDetails />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/admin" element={<ProtectedRoute />}>
-        <Route index element={<AdminPage />} />
-      </Route>
+      <Route path="/admin" element={<AdminPage />} />
     </Routes>
   );
 };

@@ -7,10 +7,17 @@ import {
 } from "../ActionType/ActionType";
 import { Logout, SignIn, SignUp, getUserById } from "../../API/UserApi";
 import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 
-const isUserLoggedIn = () => {
-  const token = Cookies.get("userPayload");
-  return !!token;
+export const isUserLoggedIn = () => {
+  const tokenString = Cookies.get("userPayload");
+  if (!tokenString) return false;
+  const token = JSON.parse(tokenString);
+  const jwtToken = token.jwtToken;
+  const decodedToken = jwt_decode(jwtToken);
+  const isAdmin = decodedToken.roles.includes("ROLE_ADMIN");
+  console.log("isAdmin", isAdmin);
+  return !!jwtToken;
 };
 
 export const register = createAsyncThunk(REGISTER, async (newUser) => {
@@ -26,7 +33,6 @@ export const login = createAsyncThunk(LOGIN, async (UserData) => {
 export const logout = createAsyncThunk(LOGOUT, async () => {
   await Logout();
   Cookies.remove("userPayload");
-  Cookies.clear();
   localStorage.clear();
   return null;
 });
@@ -72,7 +78,6 @@ const UserSliceReducer = createSlice({
         state.data = action.payload.data;
         state.error = action.payload.message;
         state.isAdmin = action.payload.data.roles.includes("admin");
-        console.log("isAdmin", state.isAdmin);
         state.isLoggedIn = true;
       })
       .addCase(login.rejected, (state, action) => {

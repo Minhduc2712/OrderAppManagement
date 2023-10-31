@@ -41,8 +41,8 @@ const Pizzas = () => {
     } else {
       const paramsString = queryString.stringify(filters);
       console.log(paramsString);
-      dispatch(actionFetchListProductAPI());
       dispatch(actionFetchPaginationListProductAPI(`${paramsString}`));
+      dispatch(actionFetchListProductAPI());
     }
   }, [dispatch, filters]);
 
@@ -74,13 +74,13 @@ const Pizzas = () => {
     <Helmet title="All Pizzas">
       <Container>
         <Row>
-          <Col lg="6" md="6" sm="6" xs="12" className="mb-5">
+          <Col lg="8" md="6" sm="6" xs="12" className="mb-5">
             <div className="search-bar-container">
               <SearchBar />
               <SearchResultsList />
             </div>
           </Col>
-          <Col lg="6" md="6" sm="6" xs="12" className="mb-5">
+          <Col lg="4" md="6" sm="6" xs="12" className="mb-5">
             <SortingDropdown
               className="input-wrapper sorting__widget text-end "
               onSort={handleSort}

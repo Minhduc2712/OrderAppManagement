@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 
 import guyImg from "../assets/images/hero.png";
 import "../styles/hero-section.css";
+import "../styles/home.css";
+import PopularFood from "../components/Product/PopularFood.jsx";
 
 const Home = () => {
   return (
@@ -32,6 +34,20 @@ const Home = () => {
               <div className="hero__img">
                 <img src={guyImg} alt="delivery-guy" className="w-100" />
               </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+      <section>
+        <Container>
+          <Row>
+            <Col lg="12" className="text-center">
+              <h2>Popular Foods</h2>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg="12">
+              <PopularFood />
             </Col>
           </Row>
         </Container>

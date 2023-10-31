@@ -13,6 +13,7 @@ import { selectlistUser } from "../../Redux/Selector/UserSelector";
 import { logout } from "../../Redux/Reducer/UserSliceReducer";
 import { selectlistProductCart } from "../../store/shopping-cart/cartSelector";
 import { getProductCartsByUserId } from "../../store/shopping-cart/cartSliceReducer";
+import { actionFetchListProductAPI } from "../../Redux/Reducer/MenuSliceReducer";
 
 const navLinks = [
   { display: "Home", path: "/home" },
@@ -33,17 +34,14 @@ const Header = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useSelector(selectlistUser);
   const { totalQuantity } = useSelector(selectlistProductCart);
-
-  const toggleMenu = () => menuRef.current.classList.toggle("show__menu");
-  const toggleCart = () => dispatch(cartUiActions.toggle());
+  const userId = useRef(null);
 
   const tokenString = Cookies.get("userPayload");
 
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.clear();
     Cookies.remove("userPayload");
-    window.location.reload();
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -51,7 +49,8 @@ const Header = () => {
       if (tokenString) {
         const token = JSON.parse(tokenString);
         const jwtToken = token.jwtToken;
-        const userId = token.userId;
+        userId.current = token.userId;
+        console.log("userId", userId);
 
         if (jwtToken) {
           const decodedToken = jwt_decode(jwtToken);
@@ -59,19 +58,17 @@ const Header = () => {
 
           if (decodedToken.exp > currentTime) {
             const savedCart = localStorage.getItem("cart");
-
-            if (savedCart) {
-            } else {
-              const response = await dispatch(getProductCartsByUserId(userId));
+            if (!savedCart) {
+              const response = await dispatch(
+                getProductCartsByUserId(userId.current)
+              );
               if (response.payload.data && response.payload.data.cart) {
                 localStorage.setItem(
                   "cart",
                   JSON.stringify(response.payload.data.cart)
                 );
-                localStorage.setItem(
-                  "totalQuantity",
-                  JSON.stringify(response.payload.data.totalQuantity)
-                );
+                const totalQuantity = response.payload.data.totalQuantity;
+                localStorage.setItem("totalQuantity", totalQuantity);
               }
             }
           }
@@ -122,6 +119,19 @@ const Header = () => {
       }
     }
   }, [tokenString, navigate, isLoggedIn]);
+
+  const toggleMenu = () => menuRef.current.classList.toggle("show__menu");
+  const toggleCart = async () => {
+    if (isLoggedIn) {
+      dispatch(cartUiActions.toggle());
+      await dispatch(getProductCartsByUserId(userId.current));
+      dispatch(actionFetchListProductAPI());
+    } else {
+      // Handle the case when the user is not logged in.
+      // You can display a message or navigate to the login page.
+      navigate("/login");
+    }
+  };
 
   return (
     <header className="header" ref={headerRef}>

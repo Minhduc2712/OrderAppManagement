@@ -5,9 +5,7 @@ import Helmet from "../components/Helmet/Helmet";
 import "../styles/cart-page.css";
 import { useSelector, useDispatch } from "react-redux";
 import { Container, Row, Col } from "reactstrap";
-
 import { Link } from "react-router-dom";
-
 import { deleteProductFromCart } from "../store/shopping-cart/cartSliceReducer";
 import { actionFetchProductById } from "../Redux/Reducer/MenuSliceReducer";
 import Cookies from "js-cookie";

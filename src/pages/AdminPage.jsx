@@ -21,13 +21,12 @@ import {
 import { selectlistProductCart } from "../store/shopping-cart/cartSelector";
 import Cookies from "js-cookie";
 import { actionFetchListCategoryAPI } from "../Redux/Reducer/CategorySliceReducer";
+import withAdminPermission from "../components/HOC/withAdminPermission";
 
-export default function DataTable() {
+function AdminPage() {
   const dispatch = useDispatch();
   const { listData: listProduct } = useSelector(selectlistProduct);
   const { data: cartProducts } = useSelector(selectlistProductCart);
-  const cartId = cartProducts.id;
-
   const tokenString = Cookies.get("userPayload");
   let userId;
   if (tokenString) {
@@ -38,7 +37,6 @@ export default function DataTable() {
   useEffect(() => {
     dispatch(actionFetchListCategoryAPI());
     dispatch(actionFetchListProductAPI());
-    dispatch(getProductCartsByUserId(userId));
   }, [dispatch, userId]);
 
   const columns = [
@@ -74,10 +72,19 @@ export default function DataTable() {
       width: 120,
       renderCell: (params) => {
         const handleDelete = () => {
-          dispatch(actionDeleteProductAPI(params.row.id));
-          if (cartId) {
-            const formValuesDB = { cartId, userId };
-            dispatch(deleteProductFromCart(formValuesDB));
+          if (cartProducts) {
+            const productToDelete = cartProducts.find(
+              (product) => product.id === params.row.id
+            );
+
+            if (productToDelete) {
+              const formValuesDB = { cartId: productToDelete.id, userId };
+              dispatch(actionDeleteProductAPI(params.row.id));
+              dispatch(deleteProductFromCart(formValuesDB));
+              dispatch(getProductCartsByUserId(userId));
+            }
+          } else {
+            dispatch(actionDeleteProductAPI(params.row.id));
           }
         };
 
@@ -189,3 +196,5 @@ export default function DataTable() {
     </Container>
   );
 }
+
+export default withAdminPermission(AdminPage);

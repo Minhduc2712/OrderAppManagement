@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Cookies from "js-cookie";
 
@@ -20,10 +20,16 @@ const ProductCard = ({ item }) => {
     userId = token.userId;
   }
 
+  const navigate = useNavigate();
+
   const addToCart = async () => {
     const qty = 1;
-    const formValuesDB = { productId, userId, qty, price };
-    dispatch(addProducttoCart(formValuesDB));
+    if (tokenString) {
+      const formValuesDB = { productId, userId, qty, price };
+      dispatch(addProducttoCart(formValuesDB));
+    } else {
+      navigate("/login");
+    }
   };
 
   return (

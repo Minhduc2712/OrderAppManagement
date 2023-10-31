@@ -4,13 +4,12 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { login } from "../Redux/Reducer/UserSliceReducer";
 import { selectlistUser } from "../Redux/Selector/UserSelector";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import { getProductCartsByUserId } from "../store/shopping-cart/cartSliceReducer";
 
 const Login = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
@@ -43,7 +42,7 @@ const Login = () => {
       };
       saveTokenToCookie(userPayload);
       dispatch(getProductCartsByUserId(userId));
-      navigate("/home");
+      // navigate("/admin");
     } catch (error) {
       setLoading(false);
     }

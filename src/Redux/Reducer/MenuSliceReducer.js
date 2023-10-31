@@ -3,6 +3,7 @@ import {
   addProductNewAPI,
   deleteProductAPI,
   getListProductAPI,
+  getProductByCategoryIdAPI,
   getProductByIdAPI,
   searchProductAPI,
 } from "../../API/ProductApi";
@@ -10,6 +11,7 @@ import {
   ADD_PRODUCT,
   DELETE_PRODUCT,
   FETCH_LIST_PRODUCT,
+  FETCH_PRODUCT_BY_CATEGORYID,
   FETCH_PRODUCT_BY_ID,
   SEARCH_PRODUCT,
 } from "../ActionType/ActionType";
@@ -43,6 +45,14 @@ export const actionFetchProductById = createAsyncThunk(
   }
 );
 
+export const actionFetchProductByCategoryId = createAsyncThunk(
+  FETCH_PRODUCT_BY_CATEGORYID,
+  async (id) => {
+    let ProductAPI = await getProductByCategoryIdAPI(id);
+    return ProductAPI;
+  }
+);
+
 export const actionAddProductAPI = createAsyncThunk(
   ADD_PRODUCT,
   async (Values) => {
@@ -63,6 +73,7 @@ const initialState = {
   status: "idle",
   listData: [],
   dataById: [],
+  dataByCategoryId: [],
   searchData: [],
   error: null,
 };
@@ -106,6 +117,18 @@ const ProductSliceReducer = createSlice({
         state.error = null;
       })
       .addCase(actionFetchProductById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(actionFetchProductByCategoryId.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(actionFetchProductByCategoryId.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.dataByCategoryId = action.payload;
+        state.error = null;
+      })
+      .addCase(actionFetchProductByCategoryId.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       })

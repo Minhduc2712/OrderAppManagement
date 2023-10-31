@@ -34,7 +34,7 @@ export const SearchBar = ({ onSearch }) => {
         }}
       />
       <span>
-        <i class="ri-search-line"></i>
+        <i className="ri-search-line"></i>
       </span>
     </div>
   );
