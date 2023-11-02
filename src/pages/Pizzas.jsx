@@ -6,29 +6,24 @@ import ReactPaginate from "react-paginate";
 import "../styles/pagination.css";
 import "../styles/search-section.css";
 import { useDispatch, useSelector } from "react-redux";
-// import { actionFetchListProductAPI } from "../Redux/Reducer/MenuSliceReducer";
 import { selectlistFilteredProduct } from "../Redux/Selector/PaginationSelector";
 import { actionFetchPaginationListProductAPI } from "../Redux/Reducer/PaginationSliceReducer";
 import queryString from "query-string";
-import $ from "jquery";
 import { SearchResultsList } from "../components/SearchBar/SearchResultList";
 import { SearchBar } from "../components/SearchBar/SearchBar";
 import SortingDropdown from "../components/SortingBar/SortingDropdown";
 
 const Pizzas = () => {
   const dispatch = useDispatch();
-  const {
-    content: product,
-    pageNo,
-    pageSize,
-    totalPages,
-  } = useSelector(selectlistFilteredProduct);
+  const { content: product, totalPages } = useSelector(
+    selectlistFilteredProduct
+  );
 
   const [filters, setFilters] = useState({
-    pageNo,
-    pageSize,
-    sortBy: "name",
-    sortDir: "asc",
+    pageNo: 0,
+    pageSize: 8,
+    sortBy: "",
+    sortDir: "",
   });
 
   const paginationRef = useRef(null);
@@ -36,22 +31,11 @@ const Pizzas = () => {
   useEffect(() => {
     if (!paginationRef.current) {
       paginationRef.current = true;
-
-      $(".paginationBttns a:nth-child(2)").addClass("active");
     } else {
       const paramsString = queryString.stringify(filters);
-      console.log(paramsString);
-      dispatch(actionFetchPaginationListProductAPI(`${paramsString}`));
+      dispatch(actionFetchPaginationListProductAPI(paramsString));
     }
-    dispatch(actionFetchPaginationListProductAPI());
   }, [dispatch, filters]);
-
-  $(document).ready(function () {
-    $(".paginationBttns a").click(function () {
-      $(".paginationBttns a").removeClass("active");
-      $(this).addClass("active");
-    });
-  });
 
   const changePage = ({ selected }) => {
     setFilters({
@@ -61,8 +45,6 @@ const Pizzas = () => {
   };
 
   const handleSort = (sortBySearch, sortDirSearch) => {
-    console.log(sortBySearch);
-    console.log(sortDirSearch);
     setFilters({
       ...filters,
       sortBy: sortBySearch,

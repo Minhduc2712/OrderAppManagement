@@ -8,7 +8,7 @@ export const actionFetchPaginationListProductAPI = createAsyncThunk(
   async (params) => {
     try {
       let response = await getListFilterdProductAPI(params);
-      return response; // Assuming your API response contains a 'data' property
+      return response;
     } catch (error) {
       throw error;
     }
@@ -18,7 +18,7 @@ export const actionFetchPaginationListProductAPI = createAsyncThunk(
 const initialState = {
   content: [],
   pageNo: 0,
-  pageSize: 4,
+  pageSize: 12,
   totalElements: 0,
   totalPages: 0,
 };
