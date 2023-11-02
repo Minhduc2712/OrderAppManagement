@@ -12,12 +12,15 @@ import queryString from "query-string";
 import { SearchResultsList } from "../components/SearchBar/SearchResultList";
 import { SearchBar } from "../components/SearchBar/SearchBar";
 import SortingDropdown from "../components/SortingBar/SortingDropdown";
+import Pagination from "@mui/material/Pagination";
 
 const Pizzas = () => {
   const dispatch = useDispatch();
-  const { content: product, totalPages } = useSelector(
-    selectlistFilteredProduct
-  );
+  const {
+    content: product,
+    pageNo,
+    totalPages,
+  } = useSelector(selectlistFilteredProduct);
 
   const [filters, setFilters] = useState({
     pageNo: 0,
@@ -27,16 +30,18 @@ const Pizzas = () => {
   });
 
   // const paginationRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     const paramsString = queryString.stringify(filters);
     dispatch(actionFetchPaginationListProductAPI(paramsString));
   }, [dispatch, filters]);
 
-  const changePage = ({ selected }) => {
+  const changePage = (event, value) => {
+    setCurrentPage(value - 1); // Cập nhật trạng thái kiểm soát
     setFilters({
       ...filters,
-      pageNo: selected,
+      pageNo: value - 1,
     });
   };
 
@@ -79,12 +84,19 @@ const Pizzas = () => {
             </Col>
           ))}
           <div className="d-flex justify-content-center mt-4 mb-4">
-            <ReactPaginate
+            {/* <ReactPaginate
               pageCount={totalPages}
               onPageChange={changePage}
               previousLabel={"Prev"}
               nextLabel={"Next"}
               containerClassName="paginationBttns"
+            /> */}
+            <Pagination
+              onChange={changePage}
+              count={totalPages}
+              page={currentPage + 1} // Sử dụng trạng thái kiểm soát
+              boundaryCount={2}
+              size="large"
             />
           </div>
         </Row>

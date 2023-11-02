@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -54,4 +54,4 @@ const ProductCard = ({ item }) => {
   );
 };
 
-export default ProductCard;
+export default React.memo(ProductCard);
