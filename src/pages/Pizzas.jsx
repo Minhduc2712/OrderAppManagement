@@ -26,15 +26,11 @@ const Pizzas = () => {
     sortDir: "",
   });
 
-  const paginationRef = useRef(null);
+  // const paginationRef = useRef(null);
 
   useEffect(() => {
-    if (!paginationRef.current) {
-      paginationRef.current = true;
-    } else {
-      const paramsString = queryString.stringify(filters);
-      dispatch(actionFetchPaginationListProductAPI(paramsString));
-    }
+    const paramsString = queryString.stringify(filters);
+    dispatch(actionFetchPaginationListProductAPI(paramsString));
   }, [dispatch, filters]);
 
   const changePage = ({ selected }) => {
