@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import ProductCard from "../components/UI/product-card/ProductCard";
 import Helmet from "../components/Helmet/Helmet";
