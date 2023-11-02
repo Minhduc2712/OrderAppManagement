@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import ProductCard from "../components/UI/product-card/ProductCard";
 import Helmet from "../components/Helmet/Helmet";
-import ReactPaginate from "react-paginate";
 import "../styles/pagination.css";
 import "../styles/search-section.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +17,7 @@ const Pizzas = () => {
   const dispatch = useDispatch();
   const {
     content: product,
-    pageNo,
+
     totalPages,
   } = useSelector(selectlistFilteredProduct);
 
