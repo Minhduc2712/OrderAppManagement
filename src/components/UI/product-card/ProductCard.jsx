@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import "../../../styles/product-card.css";
 import { addProducttoCart } from "../../../store/shopping-cart/cartSliceReducer";
 
-const ProductCard = React.memo(({ item }) => {
+const ProductCard = ({ item }) => {
   const dispatch = useDispatch();
   const { id, name, img, price, country, rate } = item;
 
@@ -52,6 +52,6 @@ const ProductCard = React.memo(({ item }) => {
       </div>
     </div>
   );
-});
+};
 
 export default ProductCard;
