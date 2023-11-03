@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import ProductCard from "../components/UI/product-card/ProductCard";
 import Helmet from "../components/Helmet/Helmet";
@@ -33,6 +33,7 @@ const Pizzas = () => {
 
   useEffect(() => {
     const paramsString = queryString.stringify(filters);
+    console.log("params", paramsString);
     dispatch(actionFetchPaginationListProductAPI(paramsString));
   }, [dispatch, filters]);
 
@@ -52,6 +53,14 @@ const Pizzas = () => {
     });
   };
 
+  const mappedProducts = useMemo(() => {
+    return product.map((item) => (
+      <Col lg="3" md="4" sm="6" xs="6" key={item.id} className="mb-4 mt-4">
+        <ProductCard item={item} />
+      </Col>
+    ));
+  }, [product]);
+
   return (
     <Helmet title="All Pizzas">
       <Container>
@@ -70,18 +79,7 @@ const Pizzas = () => {
           </Col>
         </Row>
         <Row>
-          {product.map((item) => (
-            <Col
-              lg="3"
-              md="4"
-              sm="6"
-              xs="6"
-              key={item.id}
-              className="mb-4 mt-4"
-            >
-              <ProductCard item={item} />
-            </Col>
-          ))}
+          {mappedProducts}
           <div className="d-flex justify-content-center mt-4 mb-4">
             {/* <ReactPaginate
               pageCount={totalPages}
