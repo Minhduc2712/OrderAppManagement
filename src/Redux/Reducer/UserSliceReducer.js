@@ -20,15 +20,38 @@ export const isUserLoggedIn = () => {
   return !!jwtToken;
 };
 
-export const register = createAsyncThunk(REGISTER, async (newUser) => {
-  const UserNew = await SignUp(newUser);
-  return UserNew;
-});
+export const register = createAsyncThunk(
+  REGISTER,
+  async (newUser, { rejectWithValue }) => {
+    try {
+      const UserNew = await SignUp(newUser);
+      console.log("UserNew", UserNew);
+      if (UserNew.data) {
+        return UserNew;
+      } else {
+        return rejectWithValue(UserNew);
+      }
+    } catch (error) {
+      throw rejectWithValue(error.response); // Simulate a rejection by throwing the error
+    }
+  }
+);
 
-export const login = createAsyncThunk(LOGIN, async (UserData) => {
-  const DataUser = await SignIn(UserData);
-  return DataUser;
-});
+export const login = createAsyncThunk(
+  LOGIN,
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await SignIn(credentials);
+      if (response.data) {
+        return response;
+      } else {
+        return rejectWithValue(response);
+      }
+    } catch (error) {
+      return rejectWithValue(error.response);
+    }
+  }
+);
 
 export const logout = createAsyncThunk(LOGOUT, async () => {
   await Logout();
@@ -67,7 +90,7 @@ const UserSliceReducer = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
         state.isLoggedIn = false;
       })
       .addCase(login.pending, (state) => {
@@ -77,12 +100,13 @@ const UserSliceReducer = createSlice({
         state.status = "succeeded";
         state.data = action.payload.data;
         state.error = action.payload.message;
-        state.isAdmin = action.payload.data.roles.includes("admin");
+        state.isAdmin =
+          action.payload.data && action.payload.data.roles.includes("admin");
         state.isLoggedIn = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
         state.isLoggedIn = false;
       })
       .addCase(logout.pending, (state) => {

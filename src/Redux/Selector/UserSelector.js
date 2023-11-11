@@ -24,3 +24,23 @@ export const selectlistUser = createSelector(
     };
   }
 );
+
+export const selectlistUserLogin = createSelector(
+  [userSelector, messageSelector, isLoggedInSelector],
+  (data, error, isLoggedIn) => {
+    return {
+      data: data,
+      error: error,
+      isLoggedIn: isLoggedIn,
+    };
+  }
+);
+
+export const selectlistUserRegister = createSelector(
+  [messageSelector],
+  (error) => {
+    return {
+      error: error,
+    };
+  }
+);

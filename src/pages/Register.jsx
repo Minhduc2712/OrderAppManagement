@@ -5,17 +5,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import * as Yup from "yup";
 import { register } from "../Redux/Reducer/UserSliceReducer";
-import { selectlistUser } from "../Redux/Selector/UserSelector";
+import { selectlistUserRegister } from "../Redux/Selector/UserSelector";
 import { Link } from "react-router-dom";
 import { Col, Row } from "reactstrap";
 
 const Register = () => {
+  // Lấy thông tin lỗi từ Redux state
+  const { error } = useSelector(selectlistUserRegister);
   const [successful, setSuccessful] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const { error } = useSelector(selectlistUser);
-  const message = error;
+  // Sử dụng useDispatch để gửi các action đến Redux store
   const dispatch = useDispatch();
 
+  // Khởi tạo giá trị ban đầu cho các trường của form
   const initialValues = {
     firstName: "",
     lastName: "",
@@ -24,6 +27,7 @@ const Register = () => {
     password: "",
   };
 
+  // Định nghĩa schema để kiểm tra tính hợp lệ của form sử dụng Yup
   const validationSchema = Yup.object().shape({
     firstName: Yup.string()
       .test(
@@ -62,16 +66,22 @@ const Register = () => {
       .required("This field is required!"),
   });
 
+  // Xử lý sự kiện khi người dùng nhấn nút đăng ký
   const handleRegister = (formValue) => {
     setSuccessful(false);
+    setMessage("");
 
+    // Gửi action đăng ký đến Redux store
     dispatch(register(formValue))
       .unwrap()
       .then(() => {
         setSuccessful(true);
+        setMessage(error);
+        console.log("message", message);
       })
       .catch(() => {
         setSuccessful(false);
+        setMessage(error);
       });
   };
 
@@ -88,73 +98,107 @@ const Register = () => {
           validationSchema={validationSchema}
           onSubmit={handleRegister}
         >
-          <Form>
-            {!successful && (
-              <div>
-                <div className="form-group">
-                  <label htmlFor="firstName">Firstname</label>
-                  <Field
-                    name="firstName"
-                    type="text"
-                    className="form-control"
-                  />
-                  <ErrorMessage
-                    name="firstName"
-                    component="div"
-                    className="alert alert-danger"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="lastName">Lastname</label>
-                  <Field name="lastName" type="text" className="form-control" />
-                  <ErrorMessage
-                    name="lastName"
-                    component="div"
-                    className="alert alert-danger"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="username">Username</label>
-                  <Field name="username" type="text" className="form-control" />
-                  <ErrorMessage
-                    name="username"
-                    component="div"
-                    className="alert alert-danger"
-                  />
-                </div>
+          {({ handleChange, values }) => (
+            <Form>
+              {!successful && (
+                <div>
+                  <div className="form-group">
+                    <label htmlFor="firstName">Firstname</label>
+                    <Field
+                      name="firstName"
+                      type="text"
+                      className="form-control"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setMessage("");
+                      }}
+                    />
+                    <ErrorMessage
+                      name="firstName"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="lastName">Lastname</label>
+                    <Field
+                      name="lastName"
+                      type="text"
+                      className="form-control"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setMessage("");
+                      }}
+                    />
+                    <ErrorMessage
+                      name="lastName"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="username">Username</label>
+                    <Field
+                      name="username"
+                      type="text"
+                      className="form-control"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setMessage("");
+                      }}
+                    />
+                    <ErrorMessage
+                      name="username"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                  </div>
 
-                <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <Field name="email" type="email" className="form-control" />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="alert alert-danger"
-                  />
-                </div>
+                  <div className="form-group">
+                    <label htmlFor="email">Email</label>
+                    <Field
+                      name="email"
+                      type="email"
+                      className="form-control"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setMessage("");
+                      }}
+                    />
+                    <ErrorMessage
+                      name="email"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                  </div>
 
-                <div className="form-group">
-                  <label htmlFor="password">Password</label>
-                  <Field
-                    name="password"
-                    type="password"
-                    className="form-control"
-                  />
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="alert alert-danger"
-                  />
-                </div>
+                  <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <Field
+                      name="password"
+                      type="password"
+                      className="form-control"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setMessage("");
+                      }}
+                    />
+                    <ErrorMessage
+                      name="password"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                  </div>
 
-                <div className="form-group">
-                  <button type="submit" className="btn btn-primary btn-block">
-                    Sign Up
-                  </button>
+                  <div className="form-group">
+                    <button type="submit" className="btn btn-primary btn-block">
+                      Sign Up
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </Form>
+              )}
+            </Form>
+          )}
         </Formik>
       </div>
 

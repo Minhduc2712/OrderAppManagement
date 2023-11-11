@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {
@@ -17,7 +17,7 @@ import { selectProductById } from "../../Redux/Selector/ProductSelector";
 import { selectFormStatus } from "../../Redux/Selector/FormSelector";
 
 const EditProductModal = (props) => {
-  const { onHandleClose, onHandleEdit, productId } = props;
+  const { onHandleClose, onHandleEdit } = props;
   const { showFormEdit: isOpen } = useSelector(selectFormStatus);
   const { data: listCategory } = useSelector(selectlistCategory);
   const { dataById: product } = useSelector(selectProductById);
@@ -26,13 +26,15 @@ const EditProductModal = (props) => {
     (category) => category.name === product.categoryName
   )?.id;
 
+  console.log("aaa", selectedCategoryId);
+
   const categoryItems = listCategory.map((category, index) => (
     <MenuItem value={category.id} key={index}>
       {category.name}
     </MenuItem>
   ));
 
-  const [selectedCategory, setSelectedCategory] = useState(selectedCategoryId);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
@@ -44,24 +46,35 @@ const EditProductModal = (props) => {
 
   const handleSubmit = (values) => {
     onHandleEdit(values);
+  };
+
+  const handleClose = () => {
     onHandleClose();
   };
+
+  useEffect(() => {
+    // Update selectedCategory only when selectedCategoryId is defined
+    if (selectedCategoryId !== undefined) {
+      setSelectedCategory(selectedCategoryId);
+    }
+    console.log("aa", selectedCategory);
+  }, [selectedCategoryId, selectedCategory]);
 
   return (
     <Modal
       open={isOpen}
-      onClose={onHandleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <div>
         <Formik
           initialValues={{
-            name: product.name || "",
-            img: product.img || "",
-            country: product.country || "",
-            rate: product.rate || 0,
-            category: selectedCategory || "", // Use selectedCategory here
+            name: product?.name || "",
+            img: "",
+            price: product?.price || "",
+            country: product?.country || "",
+            rate: product?.rate || 0,
+            category: selectedCategory || "",
           }}
           enableReinitialize={true}
           validationSchema={validationSchema}
@@ -97,7 +110,7 @@ const EditProductModal = (props) => {
                 <div>
                   <Field
                     as={TextField}
-                    type="string"
+                    type="file"
                     name="img"
                     label="Image"
                     fullWidth
@@ -154,7 +167,7 @@ const EditProductModal = (props) => {
                     name="category"
                     fullWidth
                     variant="outlined"
-                    value={selectedCategory} // Set the value of the Select
+                    value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)} // Handle change event
                   >
                     <MenuItem value="" disabled>
@@ -175,7 +188,7 @@ const EditProductModal = (props) => {
                   <Button
                     variant="outlined"
                     color="error"
-                    onClick={onHandleClose}
+                    onClick={handleClose}
                   >
                     Close
                   </Button>

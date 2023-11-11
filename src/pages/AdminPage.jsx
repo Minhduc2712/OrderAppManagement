@@ -22,6 +22,7 @@ import { selectlistProductCart } from "../store/shopping-cart/cartSelector";
 import Cookies from "js-cookie";
 import { actionFetchListCategoryAPI } from "../Redux/Reducer/CategorySliceReducer";
 import withAdminPermission from "../components/HOC/withAdminPermission";
+import EditProductModal from "../components/Product/ModalEditProduct";
 
 function AdminPage() {
   const dispatch = useDispatch();
@@ -106,8 +107,7 @@ function AdminPage() {
       width: 120,
       renderCell: (params) => {
         const handleEditProduct = () => {
-          dispatch(formActions.showFormEdit());
-          onHandleEdit(params.row.id);
+          onHandleEditProduct(params.row.id);
         };
         return (
           <Button
@@ -168,8 +168,22 @@ function AdminPage() {
     dispatch(formActions.closeForm());
   };
 
-  const onHandleEdit = (id) => {
+  const onHandleEditProduct = (id) => {
     dispatch(actionFetchProductById(id));
+    dispatch(formActions.showFormEdit());
+  };
+
+  const onHandleEdit = (values) => {
+    const productUpdateAPI = {
+      country: values.country,
+      img: values.img,
+      price: values.price,
+      rate: values.rate,
+      categoryId: values.category,
+      name: values.name,
+    };
+    dispatch(actionAddProductAPI(productUpdateAPI));
+    dispatch(formActions.closeForm());
   };
 
   return (
@@ -185,6 +199,10 @@ function AdminPage() {
         <ModalCreateNewProduct
           onHandleClose={onHandleClose}
           onHandleCreate={onHandleCreate}
+        />
+        <EditProductModal
+          onHandleClose={onHandleClose}
+          onHandleEdit={onHandleEdit}
         />
         <DataGrid
           rows={rows}

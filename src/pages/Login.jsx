@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { login } from "../Redux/Reducer/UserSliceReducer";
-import { selectlistUser } from "../Redux/Selector/UserSelector";
+import { selectlistUserLogin } from "../Redux/Selector/UserSelector";
 import { Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
@@ -11,10 +11,11 @@ import { getProductCartsByUserId } from "../store/shopping-cart/cartSliceReducer
 
 const Login = () => {
   const dispatch = useDispatch();
+  const { data, error, isLoggedIn } = useSelector(selectlistUserLogin);
 
   const [loading, setLoading] = useState(false);
-
-  const { data: user, error, isLoggedIn } = useSelector(selectlistUser);
+  const [message, setMessage] = useState("");
+  const [user, setUser] = useState([]);
 
   const initialValues = {
     username: "",
@@ -29,13 +30,14 @@ const Login = () => {
   const handleLogin = async (formValues) => {
     const { username, password } = formValues;
     setLoading(true);
+    setMessage("");
 
     try {
       const response = await dispatch(login({ username, password })).unwrap();
       const jwtToken = response.data.token;
       const userId = response.data.id;
-      console.log("jwtToken", jwtToken);
-
+      setMessage(error);
+      setUser(data);
       const userPayload = {
         userId: userId,
         jwtToken: jwtToken,
@@ -45,6 +47,7 @@ const Login = () => {
       // navigate("/admin");
     } catch (error) {
       setLoading(false);
+      setMessage(error.message);
     }
   };
 
@@ -83,46 +86,64 @@ const Login = () => {
           validationSchema={validationSchema}
           onSubmit={handleLogin}
         >
-          <Form>
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <Field name="username" type="text" className="form-control" />
-              <ErrorMessage
-                name="username"
-                component="div"
-                className="alert alert-danger"
-              />
-            </div>
+          {({ handleChange, values }) => (
+            <Form>
+              <div className="form-group">
+                <label htmlFor="username">Username</label>
+                <Field
+                  name="username"
+                  type="text"
+                  className="form-control"
+                  onChange={(e) => {
+                    handleChange(e);
+                    setMessage("");
+                  }}
+                />
+                <ErrorMessage
+                  name="username"
+                  component="div"
+                  className="alert alert-danger"
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <Field name="password" type="password" className="form-control" />
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="alert alert-danger"
-              />
-            </div>
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <Field
+                  name="password"
+                  type="password"
+                  className="form-control"
+                  onChange={(e) => {
+                    handleChange(e);
+                    setMessage("");
+                  }}
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="alert alert-danger"
+                />
+              </div>
 
-            <div className="form-group">
-              <button
-                type="submit"
-                className="btn btn-primary btn-block"
-                disabled={loading}
-              >
-                {loading && (
-                  <span className="spinner-border spinner-border-sm"></span>
-                )}
-                <span>Login</span>
-              </button>
-            </div>
-          </Form>
+              <div className="form-group">
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-block"
+                  disabled={loading}
+                >
+                  {loading && (
+                    <span className="spinner-border spinner-border-sm"></span>
+                  )}
+                  <span>Login</span>
+                </button>
+              </div>
+            </Form>
+          )}
         </Formik>
 
-        {error && (
+        {message && (
           <div className="form-group">
             <div className="alert alert-danger" role="alert">
-              {error}
+              {message}
             </div>
           </div>
         )}
