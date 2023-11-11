@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -69,21 +69,21 @@ const Register = () => {
   // Xử lý sự kiện khi người dùng nhấn nút đăng ký
   const handleRegister = (formValue) => {
     setSuccessful(false);
-    setMessage("");
 
     // Gửi action đăng ký đến Redux store
     dispatch(register(formValue))
       .unwrap()
       .then(() => {
         setSuccessful(true);
-        setMessage(error);
-        console.log("message", message);
       })
       .catch(() => {
         setSuccessful(false);
-        setMessage(error);
       });
   };
+
+  useEffect(() => {
+    setMessage(error);
+  }, [error]);
 
   return (
     <div className="col-md-12 signup-form">
@@ -143,8 +143,8 @@ const Register = () => {
                       type="text"
                       className="form-control"
                       onChange={(e) => {
-                        handleChange(e);
                         setMessage("");
+                        handleChange(e);
                       }}
                     />
                     <ErrorMessage
@@ -161,8 +161,8 @@ const Register = () => {
                       type="email"
                       className="form-control"
                       onChange={(e) => {
-                        handleChange(e);
                         setMessage("");
+                        handleChange(e);
                       }}
                     />
                     <ErrorMessage
