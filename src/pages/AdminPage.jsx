@@ -8,6 +8,7 @@ import {
   actionDeleteProductAPI,
   actionFetchListProductAPI,
   actionFetchProductById,
+  actionUpdateProductAPI,
 } from "../Redux/Reducer/MenuSliceReducer";
 import { selectlistProduct } from "../Redux/Selector/ProductSelector";
 import ModalCreateNewProduct from "../components/Product/ModalCreateNewProduct";
@@ -73,7 +74,7 @@ function AdminPage() {
       width: 120,
       renderCell: (params) => {
         const handleDelete = () => {
-          if (cartProducts) {
+          if (!cartProducts) {
             const productToDelete = cartProducts.find(
               (product) => product.id === params.row.id
             );
@@ -133,18 +134,18 @@ function AdminPage() {
     categoryName: product.categoryName,
   }));
 
-  useEffect(() => {
-    const handleProductDeleted = () => {
-      console.log("Product deleted. Reloading the page...");
-      dispatch(actionFetchListProductAPI());
-    };
+  // useEffect(() => {
+  //   const handleProductDeleted = () => {
+  //     console.log("Product deleted. Reloading the page...");
+  //     dispatch(actionFetchListProductAPI());
+  //   };
 
-    document.addEventListener("productDeleted", handleProductDeleted);
+  //   document.addEventListener("productDeleted", handleProductDeleted);
 
-    return () => {
-      document.removeEventListener("productDeleted", handleProductDeleted);
-    };
-  }, [dispatch, listProduct]);
+  //   return () => {
+  //     document.removeEventListener("productDeleted", handleProductDeleted);
+  //   };
+  // }, [dispatch, listProduct]);
 
   const handleAddNewProduct = () => {
     dispatch(formActions.showFormCreate());
@@ -154,7 +155,7 @@ function AdminPage() {
     dispatch(formActions.closeForm());
   };
 
-  const onHandleCreate = (values) => {
+  const onHandleCreate = async (values) => {
     const productNewAPI = {
       country: values.country,
       img: values.img,
@@ -163,9 +164,11 @@ function AdminPage() {
       categoryId: values.category,
       name: values.name,
     };
-    console.log(productNewAPI);
-    dispatch(actionAddProductAPI(productNewAPI));
-    dispatch(formActions.closeForm());
+    try {
+      console.log(productNewAPI);
+      dispatch(actionAddProductAPI(productNewAPI));
+      dispatch(formActions.closeForm());
+    } catch (error) {}
   };
 
   const onHandleEditProduct = (id) => {
@@ -173,8 +176,9 @@ function AdminPage() {
     dispatch(formActions.showFormEdit());
   };
 
-  const onHandleEdit = (values) => {
+  const onHandleEdit = async (values) => {
     const productUpdateAPI = {
+      id: values.id,
       country: values.country,
       img: values.img,
       price: values.price,
@@ -182,8 +186,14 @@ function AdminPage() {
       categoryId: values.category,
       name: values.name,
     };
-    dispatch(actionAddProductAPI(productUpdateAPI));
-    dispatch(formActions.closeForm());
+    try {
+      await dispatch(actionUpdateProductAPI(productUpdateAPI));
+      dispatch(formActions.closeForm());
+      dispatch(actionFetchListProductAPI());
+    } catch (error) {
+      // Handle error (e.g., display a message to the user)
+      console.error("Error updating product:", error);
+    }
   };
 
   return (

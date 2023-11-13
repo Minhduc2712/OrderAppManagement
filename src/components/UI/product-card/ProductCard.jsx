@@ -37,7 +37,7 @@ const ProductCard = ({ item }) => {
       <div className="product__content">
         <img className="product__img w-50" src={img} alt="Pizza" />
         <h5>
-          <Link to={`/pizzas/${id}`}>{name}</Link>
+          <Link to={`/foods/${id}`}>{name}</Link>
         </h5>
         <h6>{country}</h6>
       </div>

@@ -6,6 +6,7 @@ import {
   getProductByCategoryIdAPI,
   getProductByIdAPI,
   searchProductAPI,
+  updateProductAPI,
 } from "../../API/ProductApi";
 import {
   ADD_PRODUCT,
@@ -14,6 +15,7 @@ import {
   FETCH_PRODUCT_BY_CATEGORYID,
   FETCH_PRODUCT_BY_ID,
   SEARCH_PRODUCT,
+  UPDATE_PRODUCT,
 } from "../ActionType/ActionType";
 
 export const actionFetchListProductAPI = createAsyncThunk(
@@ -61,6 +63,14 @@ export const actionAddProductAPI = createAsyncThunk(
   }
 );
 
+export const actionUpdateProductAPI = createAsyncThunk(
+  UPDATE_PRODUCT,
+  async (Values) => {
+    let response = await updateProductAPI(Values);
+    return response;
+  }
+);
+
 export const actionDeleteProductAPI = createAsyncThunk(
   DELETE_PRODUCT,
   async (id) => {
@@ -72,6 +82,7 @@ export const actionDeleteProductAPI = createAsyncThunk(
 const initialState = {
   status: "idle",
   listData: [],
+  updateData: [],
   dataById: [],
   dataByCategoryId: [],
   searchData: [],
@@ -153,6 +164,18 @@ const ProductSliceReducer = createSlice({
         state.error = null;
       })
       .addCase(actionAddProductAPI.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(actionUpdateProductAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(actionUpdateProductAPI.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.updateData = action.payload.data;
+        state.error = action.payload.message;
+      })
+      .addCase(actionUpdateProductAPI.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });

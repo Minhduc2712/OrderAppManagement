@@ -16,8 +16,6 @@ const Carts = () => {
 
   const { listData: Products } = useSelector(selectlistProduct);
 
-  console.log("pro", Products);
-
   const toggleCart = () => {
     dispatch(cartUiActions.toggle());
   };

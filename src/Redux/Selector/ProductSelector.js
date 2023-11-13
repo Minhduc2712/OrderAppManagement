@@ -1,6 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 
 const listProductSelector = (state) => state.product.listData;
+const updateProductSelector = (state) => state.product.updateData;
 const productByIdSelector = (state) => state.product.dataById;
 const productByCategoryIdSelector = (state) => state.product.dataByCategoryId;
 const statusSelector = (state) => state.product.status;
@@ -12,6 +13,17 @@ export const selectlistProduct = createSelector(
   (listdata, status, error) => {
     return {
       listData: listdata,
+      status: status,
+      error: error,
+    };
+  }
+);
+
+export const selectUpdateProduct = createSelector(
+  [updateProductSelector, statusSelector, errorSelector],
+  (updateData, status, error) => {
+    return {
+      updateData: updateData,
       status: status,
       error: error,
     };

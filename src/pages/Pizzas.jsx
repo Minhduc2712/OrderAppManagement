@@ -12,6 +12,7 @@ import { SearchResultsList } from "../components/SearchBar/SearchResultList";
 import { SearchBar } from "../components/SearchBar/SearchBar";
 import SortingDropdown from "../components/SortingBar/SortingDropdown";
 import Pagination from "@mui/material/Pagination";
+import { actionFetchListCategoryAPI } from "../Redux/Reducer/CategorySliceReducer";
 
 const Pizzas = () => {
   const dispatch = useDispatch();
@@ -28,7 +29,6 @@ const Pizzas = () => {
     sortDir: "",
   });
 
-  // const paginationRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
@@ -37,8 +37,12 @@ const Pizzas = () => {
     dispatch(actionFetchPaginationListProductAPI(paramsString));
   }, [dispatch, filters]);
 
+  // useEffect(() => {
+  //   dispatch(actionFetchListCategoryAPI());
+  // }, [dispatch]);
+
   const changePage = (event, value) => {
-    setCurrentPage(value - 1); // Cập nhật trạng thái kiểm soát
+    setCurrentPage(value - 1);
     setFilters({
       ...filters,
       pageNo: value - 1,
@@ -81,17 +85,10 @@ const Pizzas = () => {
         <Row>
           {mappedProducts}
           <div className="d-flex justify-content-center mt-4 mb-4">
-            {/* <ReactPaginate
-              pageCount={totalPages}
-              onPageChange={changePage}
-              previousLabel={"Prev"}
-              nextLabel={"Next"}
-              containerClassName="paginationBttns"
-            /> */}
             <Pagination
               onChange={changePage}
               count={totalPages}
-              page={currentPage + 1} // Sử dụng trạng thái kiểm soát
+              page={currentPage + 1}
               boundaryCount={2}
               size="large"
             />

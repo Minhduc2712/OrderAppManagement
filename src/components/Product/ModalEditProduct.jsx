@@ -69,6 +69,7 @@ const EditProductModal = (props) => {
       <div>
         <Formik
           initialValues={{
+            id: product?.id || "",
             name: product?.name || "",
             img: "",
             price: product?.price || "",
